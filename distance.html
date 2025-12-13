@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>اندازه‌گیری مثلث با کالیبراسیون X</title>
+  <title>distance</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
     body { margin: 0; direction: rtl; font-family: Tahoma, sans-serif; background: #f0f0f0; }
@@ -13,7 +13,7 @@
     let points = []; // [X, dummy_click_near_X, Y, Z] — فقط ۳ نقطه واقعی ذخیره می‌شه
     const PIXELS_PER_METER = 100; // هر ۱۰۰ پیکسل = ۱ متر
     const CIRCLE_RADIUS = 15;
-    const labels = ['X', 'Y', 'Z'];
+    const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 30; // حداکثر فاصله مجاز برای کلیک دوم (نزدیک X)
 
     let stage = 0; // 0: منتظر X | 1: منتظر کلیک نزدیک X | 2: منتظر Y | 3: منتظر Z | 4: کامل
@@ -47,20 +47,21 @@
       fill(50);
       textSize(18);
       if (stage === 0) {
-        text("لطفاً نقطه X را انتخاب کنید", width/2, 50);
+        text("نقطه X را انتخاب کنید", width/2, 50);
       } else if (stage === 1) {
-        text("حالا یک کلیک خیلی نزدیک به نقطه X بزنید (برای تأیید)", width/2, 50);
+        text("یک نقطه جدید روی X بزنید", width/2, 50);
         fill(200, 0, 0);
         textSize(16);
-        text("باید خیلی نزدیک باشد!", width/2, height - 60);
+        text("باید دقیقا روی x باشد!", width/2, height - 60);
       } else if (stage === 2) {
-        text("عالی! حالا نقطه Y را انتخاب کنید", width/2, 50);
-      } else if (stage === 3) {
-        text("حالا نقطه Z را انتخاب کنید تا مثلث کامل شود", width/2, 50);
-      } else if (stage === 4) {
-        text("مثلث کامل شد! فاصله X به Y در پایین نمایش داده شده", width/2, 50);
-      }
+        text("نقطه Y را انتخاب کنید", width/2, 50);
 
+        fill(0);
+        textSize(16);
+        text("فاصله‌ی x تا خودش برابر صفر است!\nاگر فاصله‌ی نقطه‌ی جدید تا x صفر باشد، نقطه‌ی جدید خود x است!", width/2, height - 50);
+      } else if (stage === 3) {
+        text("نقطه Z را انتخاب کنید", width/2, 50);
+      }
       // اگر حداقل دو نقطه واقعی داشته باشیم (X و Y)
       if (points.length >= 2) {
         let pX = points[0];
@@ -133,22 +134,33 @@
         textSize(16);
         text(`${metersXZ.toFixed(2)} متر`, midX, midY);
       }
-
       // نمایش بزرگ فاصله X به Y در پایین صفحه
-      if (points.length >= 2) {
+      if (points.length == 2) {
         let distXY = dist(points[0].x, points[0].y, points[1].x, points[1].y);
         let metersXY = distXY / PIXELS_PER_METER;
 
         fill(0);
-        textSize(26);
+        textSize(20);
         textStyle(BOLD);
-        text(`فاصله X تا Y: ${metersXY.toFixed(2)} متر`, width/2, height - 80);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
+        text("\n\nفاصله‌ی x تا y برابر است با فاصله‌ی y تا x (متقارن)", width/2, height - 80);
+
+        fill(100);
+        textSize(16);
+      } else if(points.length == 3){
+        let distXY = dist(points[0].x, points[0].y, points[1].x, points[1].y);
+        let metersXY = distXY / PIXELS_PER_METER;
+
+        fill(0);
+        textSize(20);
+        textStyle(BOLD);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
+        text("\n\n\nفاصله‌ی x تا y کمتر است از مجموع فاصله‌های y تا z و x تا z (نامساوی مثلث)", width/2, height - 80);
 
         fill(100);
         textSize(16);
         if (stage === 4) {
-          text("برای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, height - 50);
-        }
+        }          text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, height - 50);
       }
     }
 
@@ -165,12 +177,7 @@
         let d = dist(mouseX, mouseY, points[0].x, points[0].y);
         if (d <= CALIBRATION_THRESHOLD) {
           stage = 2; // تأیید شد، برو به Y
-        } else {
-          fill(200, 0, 0);
-          textSize(20);
-          text("خیلی دور است! دوباره نزدیک به X کلیک کنید", width/2, height/2);
         }
-
       } else if (stage === 2) {
         // مرحله ۳: نقطه Y
         points[1] = {x: mouseX, y: mouseY};
