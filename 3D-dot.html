@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>فضای متریک سه‌بعدی - لبه‌ها پررنگ</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+  <style>
+    body { margin: 0; font-family: Tahoma; background: #f0f0f0; }
+    #container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; }
+    .controls { text-align: center; margin: 20px; }
+    select, input, label { padding: 10px; margin: 5px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1 style="text-align:center;">فضای متریک سه‌بعدی تعاملی</h1>
+    <p style="text-align:center;">لبه‌ها حالا کاملاً پررنگ و واضح هستن – مثل تصاویر حرفه‌ای!</p>
+    <div class="controls">
+      <label>متریک:</label>
+      <select id="metricSelect">
+        <option value="euclidean">اقلیدسی (کره)</option>
+        <option value="manhattan">منهتن (اکتاهدرون)</option>
+        <option value="chebyshev">چبیشف (مکعب)</option>
+      </select>
+      <label>شعاع:</label>
+      <input type="range" id="radiusSlider" min="50" max="250" value="150">
+      <span id="radiusValue">150</span>
+      <label><input type="checkbox" id="wireframe"> نمایش لبه‌ها (پررنگ)</label>
+    </div>
+  </div>
+
+  <script>
+    let currentMetric = 'euclidean';
+    let r = 150;
+    let showWire = false;
+
+    function setup() {
+      createCanvas(800, 600, WEBGL);
+    }
+
+    function draw() {
+      background(240);
+      orbitControl(1, 1, 0);  // بدون زوم
+
+      ambientLight(100);
+      directionalLight(255, 255, 255, 0, 0, -1);
+
+      // محورها
+      strokeWeight(3);
+      stroke(255, 0, 0); line(-300, 0, 0, 300, 0, 0);
+      stroke(0, 255, 0); line(0, -300, 0, 0, 300, 0);
+      stroke(0, 0, 255); line(0, 0, -300, 0, 0, 300);
+
+      push();
+      scale(r);
+
+      if (showWire) {
+        noFill();
+        stroke(0);  // مشکی پررنگ
+        strokeWeight(4);  // ضخیم‌تر
+      } else {
+        fill(255, 140, 0, 160);
+        noStroke();
+      }
+
+      if (currentMetric === 'euclidean') {
+        sphere(1);
+      } else if (currentMetric === 'manhattan') {
+        let s = 1;
+        beginShape(TRIANGLES);
+        vertex(0,0,s); vertex(s,0,0); vertex(0,s,0);
+        vertex(0,0,s); vertex(0,s,0); vertex(-s,0,0);
+        vertex(0,0,s); vertex(-s,0,0); vertex(0,-s,0);
+        vertex(0,0,s); vertex(0,-s,0); vertex(s,0,0);
+
+        vertex(0,0,-s); vertex(s,0,0); vertex(0,s,0);
+        vertex(0,0,-s); vertex(0,s,0); vertex(-s,0,0);
+        vertex(0,0,-s); vertex(-s,0,0); vertex(0,-s,0);
+        vertex(0,0,-s); vertex(0,-s,0); vertex(s,0,0);
+        endShape();
+      } else if (currentMetric === 'chebyshev') {
+        box(2);
+      }
+
+      pop();
+    }
+
+    // کنترل‌ها
+    document.getElementById('metricSelect').onchange = (e) => currentMetric = e.target.value;
+    document.getElementById('radiusSlider').oninput = (e) => {
+      r = e.target.value;
+      document.getElementById('radiusValue').innerText = r;
+    };
+    document.getElementById('wireframe').onchange = (e) => showWire = e.target.checked;
+  </script>
+</body>
+</html>
