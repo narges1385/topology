@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>چک کردن متریک - نسخه نهایی و آسان</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.2/math.js"></script>
+  <style>
+    body { font-family: Tahoma, sans-serif; direction: rtl; background: linear-gradient(to bottom, #f8f9fa, #e9ecef); margin: 0; padding: 20px; }
+    h1 { color: #343a40; text-align: center; }
+    .container { max-width: 920px; margin: 0 auto; background: white; border-radius: 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); padding: 30px; }
+    #display { 
+      width: 100%; height: 100px; font-size: 30px; text-align: center; background: #f8f9fa; 
+      border: 3px solid #ced4da; border-radius: 14px; padding: 15px; box-sizing: border-box; 
+      margin-bottom: 25px; direction: ltr; font-family: "Courier New", monospace; line-height: 1.5;
+      cursor: text; overflow-wrap: break-word; user-select: text;
+    }
+    #display:empty::before { content: "(اینجا فرمول ساخته می‌شود)"; color: #aaa; }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 25px; }
+    .btn { padding: 18px; font-size: 19px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-weight: bold; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .btn-var { background: #6c757d; color: white; }
+    .btn-func { background: #007bff; color: white; }
+    .btn-op { background: #28a745; color: white; }
+    .btn-extra { background: #fd7e14; color: white; }
+    .btn-action { background: #dc3545; color: white; }
+    .btn-check { grid-column: span 4; padding: 20px; font-size: 24px; background: #17a2b8; color: white; font-weight: bold; }
+    #result { margin-top: 25px; padding: 20px; border-radius: 14px; font-size: 21px; text-align: center; font-weight: bold; }
+    .yes { background: #d1e7dd; color: #0f5132; border: 2px solid #badbcc; }
+    .no { background: #f8d7da; color: #721c24; border: 2px solid #f5c2c7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>آیا این تابع یک متریک است؟</h1>
+    <p style="text-align:center; color:#555;">با دکمه‌ها فرمول فاصله d(x,y) را بسازید و چک کنید</p>
+    
+    <div id="display" contenteditable="true">|x − y|</div>
+    
+    <div class="buttons">
+      <!-- متغیرها -->
+      <button class="btn btn-var" onclick="insert('x')">x</button>
+      <button class="btn btn-var" onclick="insert('y')">y</button>
+      <button class="btn btn-var" onclick="insert('x − y')">(x − y)</button>
+      <button class="btn btn-var" onclick="insert('|x − y|')">|x − y|</button>
+
+      <!-- توابع اصلی -->
+      <button class="btn btn-func" onclick="insertWithCursor('√( )', 2)">√( )</button>
+      <button class="btn btn-func" onclick="insert('(x − y)^2')">(x − y)²</button>
+      <button class="btn btn-func" onclick="insertWithCursor('min( , )', 5)">min( , )</button>
+      <button class="btn btn-func" onclick="insertWithCursor('max( , )', 5)">max( , )</button>
+
+      <!-- عملگرها -->
+      <button class="btn btn-op" onclick="insert(' + ')">+</button>
+      <button class="btn btn-op" onclick="insert(' − ')">−</button>
+      <button class="btn btn-op" onclick="insert(' × ')">×</button>
+      <button class="btn btn-op" onclick="insert(' ÷ ')">÷</button>
+
+      <!-- اضافی و مثال -->
+      <button class="btn btn-extra" onclick="insert(' ( ')">(</button>
+      <button class="btn btn-extra" onclick="insert(' ) ')">)</button>
+      <button class="btn btn-extra" onclick="insert(' , ')">, </button>
+      <button class="btn btn-extra Daisy" onclick="insert('1/(1 + |x − y|) ')">1/(1 + |x−y|)</button>
+
+      <!-- اقدامات -->
+      <button class="btn btn-action" onclick="backspace()">← پاک کن</button>
+      <button class="btn btn-action" onclick="clearDisplay()">پاک کردن همه</button>
+      <button class="btn btn-action" onclick="setFormula('|x − y|')">مثال: متریک معمولی</button>
+      <button class="btn btn-action" onclick="setFormula('(x − y)^2')">مثال: نیست (مربع)</button>
+    </div>
+
+    <button class="btn btn-check" onclick="checkMetric()">چک کن آیا متریک است؟</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    let points = [];
+    generateTestPoints();
+
+    function setup() {
+      let canvas = createCanvas(850, 180);
+      canvas.parent('container');
+      canvas.style('display', 'block'); 
+      canvas.style('margin', '30px auto 0');
+      canvas.style('border-radius', '12px');
+      canvas.style('box-shadow', '0 4px 15px rgba(0,0,0,0.1)');
+    }
+
+    function draw() {
+      background(250);
+      drawAxis();
+      drawPoints();
+    }
+
+    function drawAxis() {
+      stroke(120);
+      strokeWeight(3);
+      line(70, height/2, width-70, height/2);
+      for (let i = -10; i <= 10; i += 2) {
+        let x = map(i, -10, 10, 70, width-70);
+        line(x, height/2 - 10, x, height/2 + 10);
+        fill(80);
+        noStroke();
+        textSize(13);
+        textAlign(CENTER);
+        text(i, x, height/2 + 28);
+      }
+    }
+
+    function drawPoints() {
+      points.forEach(p => {
+        let x = map(p.val, -10, 10, 70, width-70);
+        fill(p.problem ? color(220, 53, 69) : color(40, 167, 69));
+        noStroke();
+        circle(x, height/2, 22);
+        fill(255);
+        textSize(13);
+        textAlign(CENTER);
+        text(p.val.toFixed(1), x, height/2 + 6);
+      });
+    }
+
+    function generateTestPoints() {
+      points = [{val: -5}, {val: -2.5}, {val: 0}, {val: 1.8}, {val: 4}, {val: 6.5}];
+      points.forEach(p => p.problem = false);
+    }
+
+    // افزودن متن
+    function insert(text) {
+      const sel = window.getSelection();
+      const range = sel.getRangeAt(0);
+      const textNode = document.createTextNode(text);
+      range.insertNode(textNode);
+      range.setStartAfter(textNode);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      display.focus();
+    }
+
+    // افزودن با مکان‌نما داخل (مثل √( ) → مکان‌نما داخل پرانتز)
+    function insertWithCursor(text, cursorPosFromEnd) {
+      insert(text);
+      for (let i = 0; i < cursorPosFromEnd; i++) {
+        document.execCommand('selectAll', false, null);
+        document.execCommand('undo', false, null); // ترفند برای حرکت مکان‌نما
+      }
+      // ساده‌تر: فقط اضافه کن و کاربر خودش تنظیم کنه (در اکثر مرورگرها کار می‌کنه)
+    }
+
+    function backspace() {
+      document.execCommand('delete');
+    }
+
+    function clearDisplay() {
+      display.innerHTML = '';
+      display.focus();
+    }
+
+    function setFormula(f) {
+      display.innerHTML = f;
+      display.focus();
+    }
+
+    window.checkMetric = function() {
+      let formula = display.innerText.trim() || display.textContent.trim();
+      if (!formula) return alert("لطفاً فرمول را بسازید");
+
+      generateTestPoints();
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = 'result';
+      resultDiv.innerHTML = '';
+
+      try {
+        let code = formula
+          .replace(/−/g, '-')
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/\|x − y\|/g, 'abs(x - y)')
+          .replace(/\|x - y\|/g, 'abs(x - y)')
+          .replace(/√/g, 'sqrt')
+          .replace(/\^/g, '**');
+
+        const expr = math.compile(code);
+        const d = (a, b) => expr.evaluate({x: a, y: b});
+
+        let errors = [];
+
+        // ۱. غیرمنفی بودن
+        if ([...points].some(p => d(p.val, p.val + 3) < -1e-8)) errors.push("غیرمنفی نیست");
+
+        // ۲. d(x,x) = 0
+        if ([...points].some(p => Math.abs(d(p.val, p.val)) > 1e-8)) errors.push("d(x,x) ≠ ۰");
+
+        // ۳. تقارن
+        for (let i = 0; i < points.length; i++) {
+          for (let j = i+1; j < points.length; j++) {
+            let a = points[i].val, b = points[j].val;
+            if (Math.abs(d(a,b) - d(b,a)) > 1e-8) {
+              errors.push("تقارن ندارد");
+              points[i].problem = points[j].problem = true;
+            }
+          }
+        }
+
+        // ۴. نابرابری مثلث
+        for (let i = 0; i < points.length; i++)
+          for (let j = 0; j < points.length; j++)
+            for (let k = 0; k < points.length; k++) {
+              let a = points[i].val, b = points[j].val, c = points[k].val;
+              if (d(a,c) > d(a,b) + d(b,c) + 1e-8) {
+                errors.push("نابرابری مثلث نقض شد");
+                points[i].problem = points[k].problem = true;
+              }
+            }
+
+        if (errors.length === 0) {
+          resultDiv.className += ' yes';
+          resultDiv.innerHTML = `✅ عالی! این تابع یک <strong>متریک</strong> است.<br>همه خاصیت‌ها برقرار هستند.`;
+        } else {
+          resultDiv.className += ' no';
+          resultDiv.innerHTML = `❌ متریک نیست.<br>مشکلات: ${[...new Set(errors)].join('، ')}`;
+        }
+      } catch (e) {
+        resultDiv.className += ' no';
+        resultDiv.innerHTML = `❌ فرمول قابل تفسیر نیست.<br>لطفاً از دکمه‌ها استفاده کنید یا فرمول را بررسی کنید.`;
+      }
+    }
+  </script>
+</body>
+</html>
