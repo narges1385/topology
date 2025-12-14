@@ -2,329 +2,262 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مقایسه متریک‌ها در فضاهای دوبعدی و سه‌بعدی</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+  <title>محاسبه فاصله در فضاهای متریک</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
   <style>
-    body { margin: 0; font-family: Tahoma, sans-serif; background: #f0f0f0; overflow: hidden; }
-    #container { width: 100vw; height: 100vh; }
-    #controls {
-      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-      background: white; padding: 15px 25px; border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 10; text-align: center;
-    }
-    select, button { font-size: 16px; padding: 10px 15px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; }
-    button { background: #007bff; color: white; cursor: pointer; }
+    body { font-family: Tahoma, sans-serif; margin: 20px; background: #eef2f7; text-align: center; }
+    #controls { margin-bottom: 20px; background: white; padding: 18px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); display: inline-block; }
+    select, button { padding: 12px 16px; margin: 8px; font-size: 17px; border-radius: 10px; border: 1px solid #ddd; }
+    button { background: #007bff; color: white; cursor: pointer; border: none; }
     button:hover { background: #0056b3; }
-    #info {
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 8px;
-      font-size: 18px;
-    }
+    #info { margin-top: 20px; background: white; padding: 20px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); display: inline-block; min-width: 500px; font-size: 18px; }
+    canvas { border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 20px; }
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  <h1>محاسبه فاصله در فضاهای متریک</h1>
+  
   <div id="controls">
-    <h2>مقایسه متریک‌ها در فضاهای دوبعدی و سه‌بعدی</h2>
-    <label>متریک: </label>
-    <select id="metricSelect">
-      <option value="euclidean">اقلیدسی (کره/دایره)</option>
-      <option value="manhattan">منهتن (هشت‌وجهی/الماس)</option>
-      <option value="chebyshev">ماکسیمم (مکعب/مربع)</option>
-      <option value="discrete">گسسته (نقطه)</option>
+    <label>بعد فضا:</label>
+    <select id="dimension">
+      <option value="2">۲ بعدی</option>
+      <option value="3" selected>۳ بعدی</option>
     </select>
-    <label>بعد: </label>
-    <select id="dimensionSelect">
-      <option value="3d">سه‌بعدی</option>
-      <option value="2d">دو‌بعدی</option>
+    
+    <label>متریک:</label>
+    <select id="metric">
+      <option value="euclidean">اقلیدسی</option>
+      <option value="manhattan">منهتن</option>
+      <option value="chebyshev">ماکسیمم (Chebyshev)</option>
+      <option value="discrete">گسسته</option>
     </select>
-    <button onclick="resetPoints()">شروع دوباره</button>
+    
+    <button id="reset">شروع دوباره</button>
   </div>
-  <div id="info">روی صحنه کلیک کن تا دو نقطه انتخاب کنی (آبی = A، قرمز = B)</div>
+  
+  <div id="info">روی صفحه کلیک کنید تا نقطه اول را انتخاب کنید.</div>
+
   <script>
-    // متغیرهای اصلی
-    let scene, camera, renderer, controls;
-    let points = []; // حداکثر دو نقطه
-    let pointMeshes = [];
-    let line = null;
-    let unitBall = null;
+    let points = [];
+    let dim = 3;
     let metric = 'euclidean';
-    let dimension = '3d'; // پیش‌فرض سه‌بعدی
 
-    // راه‌اندازی صحنه
-    function init() {
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xffffff);
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.getElementById('container').appendChild(renderer.domElement);
-
-      // نور
-      const light = new THREE.DirectionalLight(0xffffff, 1);
-      light.position.set(5, 10, 7);
-      scene.add(light);
-      scene.add(new THREE.AmbientLight(0x404040));
-
-      // محورها
-      scene.add(new THREE.AxesHelper(5));
-
-      // زمین گرید
-      const grid = new THREE.GridHelper(10, 20);
-      scene.add(grid);
-
-      // هندلر کلیک
-      renderer.domElement.addEventListener('click', onClick);
-
-      // تنظیم دوربین و کنترل‌ها بر اساس بعد
-      updateCameraAndControls();
-
-      animate();
-    }
-
-    function updateCameraAndControls() {
-      if (controls) controls.dispose(); // حذف کنترل قبلی
-
-      if (dimension === '3d') {
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(5, 5, 8);
-      } else { // 2d
-        const aspect = window.innerWidth / window.innerHeight;
-        const size = 10;
-        camera = new THREE.OrthographicCamera(-size * aspect / 2, size * aspect / 2, size / 2, -size / 2, 0.1, 1000);
-        camera.position.set(0, 0, 10); // نگاه از بالا به صفحه XY
-        camera.lookAt(0, 0, 0);
-      }
-
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.enableZoom = false; // غیرفعال کردن زوم
-      controls.enablePan = false; // غیرفعال کردن جابجایی (پن)
-      controls.enableRotate = true; // فعال کردن چرخش
-
-      if (dimension === '2d') {
-        // در 2D، چرخش را محدود به محور Z کنیم (چرخش در صفحه)
-        controls.screenSpacePanning = false;
-        controls.minPolarAngle = Math.PI / 2;
-        controls.maxPolarAngle = Math.PI / 2;
-      }
-
-      updateScene();
-    }
-
-    function onClick(event) {
-      const rect = renderer.domElement.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0); // صفحه XY
-      const intersectPoint = new THREE.Vector3();
-      raycaster.ray.intersectPlane(plane, intersectPoint);
-      if (intersectPoint) {
-        addPoint(intersectPoint);
-      }
-    }
-
-    function addPoint(pos) {
-      // در 2D، z را همیشه 0 نگه داریم
-      if (dimension === '2d') {
-        pos.z = 0;
-      }
-
-      // حذف نقطه قدیمی اگر دو تا داریم
-      if (points.length === 2) {
-        points[1] = pos.clone();
-        scene.remove(pointMeshes[1]);
-      } else {
-        points.push(pos.clone());
-      }
-
-      // ساخت مش نقطه
-      const geometry = new THREE.SphereGeometry(0.15, 32, 32);
-      const color = points.length === 1 ? 0x0000ff : 0xff0000; // آبی یا قرمز
-      const material = new THREE.MeshPhongMaterial({ color });
-      const sphere = new THREE.Mesh(geometry, material);
-      sphere.position.copy(pos);
-      scene.add(sphere);
-
-      if (pointMeshes.length < 2) {
-        pointMeshes.push(sphere);
-      } else {
-        pointMeshes[1] = sphere;
-      }
-
-      updateScene();
-    }
-
-    function updateScene() {
-      // حذف خط و توپ قبلی
-      if (line) scene.remove(line);
-      if (unitBall) scene.remove(unitBall);
-
-      if (points.length >= 1) {
-        drawUnitBall(points[0]);
-      }
-
-      if (points.length === 2) {
-        drawLineBetweenPoints();
-        updateDistanceInfo();
-      } else {
-        document.getElementById('info').innerHTML = "روی صحنه کلیک کن تا دو نقطه انتخاب کنی (آبی = A، قرمز = B)";
-      }
-    }
-
-    function drawUnitBall(center) {
-      if (unitBall) scene.remove(unitBall);
-
-      let geometry;
-      const material = new THREE.MeshPhongMaterial({
-        color: 0x00aaff,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.DoubleSide
+    function setup() {
+      createCanvas(900, 700, WEBGL);
+      
+      select('#dimension').changed(() => {
+        dim = int(select('#dimension').value());
+        points = [];
+        updateInfo();
       });
 
-      if (dimension === '3d') {
-        if (metric === 'euclidean') {
-          geometry = new THREE.SphereGeometry(1, 32, 32);
-        } else if (metric === 'manhattan') {
-          geometry = new THREE.OctahedronGeometry(1);
-        } else if (metric === 'chebyshev') {
-          geometry = new THREE.BoxGeometry(2, 2, 2);
-        } else if (metric === 'discrete') {
-          geometry = new THREE.SphereGeometry(0.1, 16, 16);
-          material.color.set(0xff0000);
-          material.opacity = 1;
+      select('#metric').changed(() => {
+        metric = select('#metric').value();
+        updateInfo();
+      });
+
+      select('#reset').mousePressed(() => {
+        points = [];
+        updateInfo();
+      });
+    }
+
+    function draw() {
+      background(240, 248, 255);
+
+      ambientLight(120);
+      directionalLight(255, 255, 255, -0.5, 0.5, -1);
+
+      if (dim === 3) {
+        orbitControl(1, 1, 0); // فقط چرخش و پن
+        rotateY(-0.45);  // زاویه استاندارد isometric با جهت مثبت محورها
+        rotateX(0.3);
+
+        // grid floor برای عمق
+        stroke(180, 200, 255, 120);
+        strokeWeight(1);
+        let gridSize = 400;
+        let step = 50;
+        for (let i = -gridSize; i <= gridSize; i += step) {
+          line(i, 0, -gridSize, i, 0, gridSize);
+          line(-gridSize, 0, i, gridSize, 0, i);
         }
-      } else { // 2d
+
+        // محورها
+        drawAxis(350, color(230, 60, 60), "X");
+        drawAxis(350, color(60, 200, 60), "Y", 'y');
+        drawAxis(350, color(60, 120, 230), "Z", 'z');
+      } else {
+        // حالت ۲ بعدی (دقیق و زیبا)
+        ortho(-width/2, width/2, height/2, -height/2);
+        camera(0, 0, 800, 0, 0, 0, 0, 1, 0);
+
+        stroke(220);
+        strokeWeight(1);
+        for (let i = -400; i <= 400; i += 50) {
+          line(i, -350, 0, i, 350, 0);
+          line(-450, i, 0, 450, i, 0);
+        }
+
+        strokeWeight(4);
+        stroke(80);
+        line(-450, 0, 0, 450, 0, 0);
+        line(0, -350, 0, 0, 350, 0);
+
+        fill(80);
+        noStroke();
+        textSize(18);
+        text("X", 460, 10);
+        text("Y", 0, -360);
+      }
+
+      // نقاط
+      points.forEach((p, i) => {
+        push();
+        translate(p.x, p.y, p.z || 0);
+        noStroke();
+        fill(i === 0 ? color(230, 70, 70) : color(70, 130, 230));
+        sphere(16);
+        pop();
+      });
+
+      // مسیرها
+      if (points.length === 2) {
+        let a = points[0];
+        let b = points[1];
+
         if (metric === 'euclidean') {
-          geometry = new THREE.CircleGeometry(1, 64);
+          stroke(80, 140, 255);
+          strokeWeight(6);
+          line(a.x, a.y, a.z||0, b.x, b.y, b.z||0);
         } else if (metric === 'manhattan') {
-          // الماس (دایموند) برای منهتن در 2D
-          const shape = new THREE.Shape();
-          shape.moveTo(0, 1);
-          shape.lineTo(1, 0);
-          shape.lineTo(0, -1);
-          shape.lineTo(-1, 0);
-          shape.lineTo(0, 1);
-          geometry = new THREE.ShapeGeometry(shape);
+          drawAxisPath(a, b, color(70, 210, 110, 240));
         } else if (metric === 'chebyshev') {
-          // مربع برای چبیشف در 2D
-          geometry = new THREE.PlaneGeometry(2, 2);
-        } else if (metric === 'discrete') {
-          geometry = new THREE.CircleGeometry(0.1, 16);
-          material.color.set(0xff0000);
-          material.opacity = 1;
+          drawChebyshevPath(a, b);
         }
       }
 
-      unitBall = new THREE.Mesh(geometry, material);
-      unitBall.position.copy(center);
-      if (dimension === '2d') {
-        unitBall.rotation.x = Math.PI / 2; // چرخاندن به صفحه XY برای اشکال 2D
-      }
-      scene.add(unitBall);
+      updateInfo();
     }
 
-    function drawLineBetweenPoints() {
-      if (line) scene.remove(line);
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const material = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 3 });
-      line = new THREE.Line(geometry, material);
-      scene.add(line);
+    function drawAxis(len, col, label, axis = 'x') {
+      stroke(col);
+      strokeWeight(7);
+      let ex = axis === 'x' ? len : 0;
+      let ey = axis === 'y' ? len : 0;
+      let ez = axis === 'z' ? len : 0;
+      line(0, 0, 0, ex, ey, ez);
+
+      // برچسب
+      push();
+      translate(ex * 1.15, ey * 1.15, ez * 1.15);
+      fill(col);
+      noStroke();
+      textSize(30);
+      textAlign(CENTER, CENTER);
+      text(label, 0, 0);
+      pop();
     }
 
-    function calculateDistance(p1, p2) {
-      const dx = Math.abs(p1.x - p2.x);
-      const dy = Math.abs(p1.y - p2.y);
-      let dz = Math.abs(p1.z - p2.z);
-      if (dimension === '2d') {
-        dz = 0; // در 2D، z نادیده گرفته می‌شود
+    function drawAxisPath(a, b, col) {
+      stroke(col);
+      strokeWeight(5);
+      let current = {x: a.x, y: a.y, z: a.z || 0};
+      let order = ['x', 'y', 'z'].filter(a => dim === 2 ? a !== 'z' : true);
+      for (let ax of order) {
+        let next = {...current};
+        if (ax === 'x') next.x = b.x;
+        if (ax === 'y') next.y = b.y;
+        if (ax === 'z') next.z = b.z;
+        line(current.x, current.y, current.z, next.x, next.y, next.z);
+        current = next;
       }
-
-      if (metric === 'euclidean') {
-        return Math.sqrt(dx*dx + dy*dy + dz*dz);
-      } else if (metric === 'manhattan') {
-        return dx + dy + dz;
-      } else if (metric === 'chebyshev') {
-        return Math.max(dx, dy, dz);
-      } else if (metric === 'discrete') {
-        return (dx === 0 && dy === 0 && dz === 0) ? 0 : 1;
-      }
-      return 0;
     }
 
-    function updateDistanceInfo() {
-      const d = calculateDistance(points[0], points[1]);
-      let name = "";
-      if (metric === 'euclidean') name = "اقلیدسی";
-      else if (metric === 'manhattan') name = "منهتن";
-      else if (metric === 'chebyshev') name = "ماکسیمم (چبیشف)";
-      else if (metric === 'discrete') name = "گسسته";
+    function drawChebyshevPath(a, b) {
+      let diffs = [
+        {axis: 'x', val: abs(b.x - a.x)},
+        {axis: 'y', val: abs(b.y - a.y)},
+        {axis: 'z', val: dim === 3 ? abs(b.z - a.z) : 0}
+      ].filter(d => d.val > 0.01 && (dim === 2 ? d.axis !== 'z' : true));
 
-      let dimName = dimension === '3d' ? "سه‌بعدی" : "دو‌بعدی";
+      diffs.sort((p,q) => q.val - p.val);
+      let maxAxis = diffs[0]?.axis;
 
-      document.getElementById('info').innerHTML = `
-        فاصله بین A و B در متریک <strong>${name}</strong> در فضای <strong>${dimName}</strong>: <strong>${d.toFixed(3)}</strong>
+      let current = {x: a.x, y: a.y, z: a.z || 0};
+      for (let d of diffs) {
+        let next = {...current};
+        if (d.axis === 'x') next.x = b.x;
+        if (d.axis === 'y') next.y = b.y;
+        if (d.axis === 'z') next.z = b.z;
+
+        if (d.axis === maxAxis) {
+          stroke(255, 80, 80);
+          strokeWeight(8);
+        } else {
+          stroke(255, 170, 90, 220);
+          strokeWeight(5);
+        }
+        line(current.x, current.y, current.z, next.x, next.y, next.z);
+        current = next;
+      }
+    }
+
+    function mousePressed() {
+      if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
+
+      // map دقیق برای همخوانی کامل کلیک با موقعیت
+      let x = map(mouseX, 0, width, -300, 300);
+      let y = map(mouseY, 0, height, 250, -250); // y معکوس برای طبیعی بودن
+      let z = dim === 3 ? 0 : 0;
+
+      if (points.length < 2) {
+        points.push({x, y, z});
+      } else {
+        points[0] = {x, y, z};
+      }
+    }
+
+    function calculateDistance(a, b) {
+      if (metric === 'discrete') return (abs(a.x-b.x)<1 && abs(a.y-b.y)<1 && (dim===2 || abs(a.z-b.z)<1)) ? 0 : 1;
+
+      let dx = abs(a.x - b.x);
+      let dy = abs(a.y - b.y);
+      let dz = dim === 3 ? abs(a.z - b.z) : 0;
+
+      if (metric === 'euclidean') return sqrt(dx*dx + dy*dy + dz*dz);
+      if (metric === 'manhattan') return dx + dy + dz;
+      if (metric === 'chebyshev') return max(dx, dy, dz);
+    }
+
+    function updateInfo() {
+      let info = document.getElementById('info');
+      if (points.length < 2) {
+        info.innerHTML = points.length === 0 
+          ? '<p style="color:#555; font-size:18px;">روی صفحه کلیک کنید تا نقطه اول را انتخاب کنید.</p>'
+          : `<p><strong>نقطه اول:</strong> (${points[0].x.toFixed(1)}, ${points[0].y.toFixed(1)}${dim===3?', '+points[0].z.toFixed(1):''})</p>
+             <p style="color:#007bff;">حالا نقطه دوم را انتخاب کنید.</p>`;
+        return;
+      }
+
+      let a = points[0], b = points[1];
+      let dist = calculateDistance(a, b).toFixed(4);
+
+      let names = {euclidean:'اقلیدسی', manhattan:'منهتن', chebyshev:'ماکسیمم (Chebyshev)', discrete:'گسسته'};
+      let formulas = {
+        euclidean: '√(Δx² + Δy²' + (dim===3?' + Δz²':'') + ')',
+        manhattan: '|Δx| + |Δy|' + (dim===3?' + |Δz|':''),
+        chebyshev: 'max(|Δx|, |Δy|' + (dim===3?', |Δz|':'') + ')',
+        discrete: '۰ اگر یکسان، ۱ در غیر این صورت'
+      };
+
+      info.innerHTML = `
+        <p><strong>نقطه A:</strong> (${a.x.toFixed(1)}, ${a.y.toFixed(1)}${dim===3?', '+a.z.toFixed(1):''})</p>
+        <p><strong>نقطه B:</strong> (${b.x.toFixed(1)}, ${b.y.toFixed(1)}${dim===3?', '+b.z.toFixed(1):''})</p>
+        <p><strong>فاصله (${names[metric]}):</strong> <span style="font-size:2.2em; color:#e74c3c; font-weight:bold;">${dist}</span></p>
+        <p><strong>فرمول:</strong> d = ${formulas[metric]}</p>
       `;
     }
-
-    function resetPoints() {
-      points.forEach(p => {
-        if (pointMeshes.length > 0) scene.remove(pointMeshes.shift());
-      });
-      points = [];
-      pointMeshes = [];
-      if (line) scene.remove(line);
-      if (unitBall) scene.remove(unitBall);
-      line = null;
-      unitBall = null;
-      document.getElementById('info').innerHTML = "روی صحنه کلیک کن تا دو نقطه انتخاب کنی (آبی = A، قرمز = B)";
-    }
-
-    // تغییر متریک
-    document.getElementById('metricSelect').onchange = function(e) {
-      metric = e.target.value;
-      updateScene();
-    };
-
-    // تغییر بعد
-    document.getElementById('dimensionSelect').onchange = function(e) {
-      dimension = e.target.value;
-      // اگر در 2D هستیم، z تمام نقاط را 0 کنیم
-      if (dimension === '2d') {
-        points.forEach(p => { p.z = 0; });
-        pointMeshes.forEach(m => { m.position.z = 0; });
-      }
-      updateCameraAndControls();
-    };
-
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', () => {
-      const aspect = window.innerWidth / window.innerHeight;
-      if (dimension === '3d') {
-        camera.aspect = aspect;
-        camera.updateProjectionMatrix();
-      } else {
-        const size = 10;
-        camera.left = -size * aspect / 2;
-        camera.right = size * aspect / 2;
-        camera.top = size / 2;
-        camera.bottom = -size / 2;
-        camera.updateProjectionMatrix();
-      }
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    init();
   </script>
 </body>
 </html>
