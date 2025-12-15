@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کوییز فضای متریک</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .quiz-container, .result-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #progress {
+            font-size: 1.1em;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        #question {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            margin: 30px 0;
+        }
+
+        .option {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: right;
+            font-size: 1.1em;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+
+        #submit-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        #submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #submit-btn:hover:not(:disabled) {
+            background: #5a6fd8;
+        }
+
+        #next-btn, #restart-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        #next-btn:hover, #restart-btn:hover {
+            background: #218838;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            font-size: 1.2em;
+            min-height: 30px;
+        }
+
+        .result-container h2 {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>کوییز فضای متریک</h1>
+        <div id="progress">سوال <span id="current">1</span> از <span id="total">10</span></div>
+        
+        <div id="question"></div>
+        
+        <div id="options" class="options"></div>
+        
+        <button id="submit-btn" disabled>ارسال جواب</button>
+        
+        <div id="feedback" class="feedback"></div>
+        
+        <button id="next-btn" style="display:none;">سوال بعدی</button>
+    </div>
+
+    <div id="result-container" class="result-container" style="display:none;">
+        <h2>کوییز تموم شد!</h2>
+        <p>امتیاز شما: <strong><span id="final-score"></span></strong> از ۱۰</p>
+        <button id="restart-btn">شروع دوباره</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "کدام یک از شرایط زیر برای تابع d تا یک متریک باشد، ضروری نیست؟",
+                options: [
+                    "d(x,y) ≥ ۰",
+                    "d(x,y) = d(y,x)",
+                    "d(x,y) + d(y,z) ≥ d(x,z)",
+                    "d(x,y) = ۰ اگر و فقط اگر x ≠ y"
+                ],
+                answer: 3,
+                explanation: "این شرط مربوط به جدایی (separability) است و برای شبه‌متریک لازم نیست."
+            },
+            {
+                question: "در فضای متریک گسسته (discrete metric)، فاصله بین دو نقطه متفاوت چقدر است؟",
+                options: ["۰", "۱", "∞", "وابسته به نقاط"],
+                answer: 1,
+                explanation: "در متریک گسسته: d(x,y) = ۱ اگر x ≠ y و d(x,x) = ۰"
+            },
+            {
+                question: "کدام مجموعه در فضای اقلیدسی ℝ با متریک معمول، کامل (complete) نیست؟",
+                options: ["ℝ", "ℤ (اعداد صحیح)", "ℚ (اعداد گویا)", "[۰,۱]"],
+                answer: 2,
+                explanation: "ℚ کامل نیست چون دنباله‌های کوشی می‌تونن به عدد گنگ همگرا بشن."
+            },
+            {
+                question: "توپ باز (open ball) با مرکز x و شعاع r شامل کدام نقاط است؟",
+                options: [
+                    "{y | d(x,y) ≤ r}",
+                    "{y | d(x,y) < r}",
+                    "{y | d(x,y) = r}",
+                    "هیچ‌کدام"
+                ],
+                answer: 1,
+                explanation: "تعریف توپ باز: فاصله کمتر از شعاع."
+            },
+            {
+                question: "هر فضای متریک، یک فضای توپولوژیک است. درست یا غلط؟",
+                options: ["درست", "غلط"],
+                answer: 0,
+                explanation: "توپولوژی فضای متریک از مجموعه توپ‌های باز ساخته می‌شود."
+            },
+            {
+                question: "در فضای متریک، مجموعه فشرده (compact) همیشه بسته و محدود است. درست یا غلط؟",
+                options: ["درست", "غلط (فقط در ℝⁿ)"],
+                answer: 0,
+                explanation: "در هر فضای متریک، compact ⇒ closed and bounded."
+            },
+            {
+                question: "مثال یک فضای متریک ناکامل کدام است؟",
+                options: ["ℝ با متریک معمول", "ℚ با متریک |x-y|", "[۰,۱]", "دایره واحد"],
+                answer: 1,
+                explanation: "ℚ با متریک ارثی از ℝ ناکامل است."
+            },
+            {
+                question: "نامساوی مثلثی در فضای متریک به چه معناست؟",
+                options: [
+                    "d(x,z) ≤ d(x,y) + d(y,z)",
+                    "d(x,z) ≥ d(x,y) + d(y,z)",
+                    "d(x,y) = ۰",
+                    "هیچ‌کدام"
+                ],
+                answer: 0,
+                explanation: "این یکی از خواص اصلی متریک است."
+            },
+            {
+                question: "کدام متریک روی ℝⁿ توپولوژی یکسانی با متریک اقلیدسی ایجاد می‌کند؟",
+                options: [
+                    "متریک ماکسیمم (∞-norm)",
+                    "متریک منهتن (۱-norm)",
+                    "همه متریک‌های نرم‌دار",
+                    "همه گزینه‌ها"
+                ],
+                answer: 3,
+                explanation: "در ℝⁿ، همه متریک‌های ناشی از نرم‌ها توپولوژی یکسانی دارند."
+            },
+            {
+                question: "دنباله کوشی در فضای متریک کامل، حتماً همگرا است. درست یا غلط؟",
+                options: ["درست", "غلط"],
+                answer: 0,
+                explanation: "این دقیقاً تعریف کامل بودن فضای متریک است."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const feedbackEl = document.getElementById('feedback');
+        const currentEl = document.getElementById('current');
+        const totalEl = document.getElementById('total');
+        const resultContainer = document.getElementById('result-container');
+        const finalScoreEl = document.getElementById('final-score');
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            
+            questionEl.textContent = q.question;
+            currentEl.textContent = currentQuestionIndex + 1;
+            totalEl.textContent = questions.length;
+            
+            optionsEl.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.classList.add('option');
+                div.textContent = option;
+                div.addEventListener('click', () => selectOption(div, index));
+                optionsEl.appendChild(div);
+            });
+            
+            submitBtn.disabled = true;
+            nextBtn.style.display = 'none';
+            feedbackEl.textContent = '';
+            selectedOption = null;
+            submitBtn.style.display = 'inline-block';
+        }
+
+        function selectOption(element, index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOption = index;
+            submitBtn.disabled = false;
+        }
+
+        submitBtn.addEventListener('click', () => {
+            if (selectedOption === null) return;
+            
+            const q = questions[currentQuestionIndex];
+            const correct = selectedOption === q.answer;
+            
+            if (correct) score++;
+            
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.answer) opt.classList.add('correct');
+                if (i === selectedOption && !correct) opt.classList.add('incorrect');
+            });
+            
+            feedbackEl.innerHTML = correct 
+                ? '<span style="color:#28a745;">درست!</span><br>' + q.explanation
+                : '<span style="color:#dc3545;">غلط!</span><br>جواب درست: ' + q.options[q.answer] + '<br>' + q.explanation;
+            
+            submitBtn.style.display = 'none';
+            if (currentQuestionIndex < questions.length - 1) {
+                nextBtn.style.display = 'inline-block';
+            } else {
+                showResult();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        function showResult() {
+            document.querySelector('.quiz-container').style.display = 'none';
+            resultContainer.style.display = 'block';
+            finalScoreEl.textContent = score + '/' + questions.length;
+        }
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.querySelector('.quiz-container').style.display = 'block';
+            resultContainer.style.display = 'none';
+            loadQuestion();
+        });
+
+        // شروع کوییز
+        loadQuestion();
+    </script>
+</body>
+</html>
