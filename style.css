@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    font-family: "El Messiri", sans-serif;
+    background: #e1fafb;
+    color: white; 
+    direction: rtl; 
+}
+#header-canvas { 
+    width: 100%; 
+    height: 600px; 
+} /* ارتفاع هدر */
+.overlay { 
+    position: absolute; 
+    top: 170px; 
+    width: 100%; 
+    text-align: center; 
+    color : #9b9b9b;
+    pointer-events: none;
+}
+h1 { 
+    font-size: 10vw; 
+    text-shadow: 0.5vw 0.5vw #061a38, -0.5vw -0.5vw #061a38; 
+    font-family: "Marhey", sans-serif;
+}
+.navbar{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: 100%;
+    background-color: #060120;
+}
+.navbar li{
+    flex: 1;
+    margin: 0.9vw 0.3vw;
+    background-color: #061a38ce;
+    border-radius: 1.5vw ;
+}
+.navbar li a{
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    color: rgb(210, 211, 206);
+    font-size: 3vw;
+    font-weight: bold;
+    padding: 3VW 0;
+    font-family: "Marhey", sans-serif;
+}
+.navbar li a:hover{
+    background-color: rgb(187, 245, 208);
+}
