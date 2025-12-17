@@ -15,6 +15,9 @@
     const CIRCLE_RADIUS = 15;
     const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 30; // حداکثر فاصله مجاز برای کلیک دوم (نزدیک X)
+    const TOP_UI_HEIGHT = 120;
+    const BOTTOM_UI_HEIGHT = 150;
+
 
     let stage = 0; // 0: منتظر X | 1: منتظر کلیک نزدیک X | 2: منتظر Y | 3: منتظر Z | 4: کامل
 
@@ -24,8 +27,23 @@
       textAlign(CENTER, CENTER);
     }
 
-    function draw() {
-      background(240);
+      function draw() {
+  background(240);
+
+  // ناحیه غیرقابل کلیک بالا
+  noStroke();
+  fill(230);
+  rect(0, 0, width, TOP_UI_HEIGHT);
+
+  // ناحیه کلیک‌پذیر (وسط)
+  fill(255);
+  rect(0, TOP_UI_HEIGHT, width, height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT);
+
+  // ناحیه غیرقابل کلیک پایین
+  fill(230);
+  rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
+
+
 
       // رسم دایره‌های نقاط واقعی (فقط X, Y, Z)
       for (let i = 0; i < Math.min(points.length, 3); i++) {
@@ -57,11 +75,20 @@
         text("نقطه Y را انتخاب کنید", width/2, 50);
 
         fill(0);
-        textSize(16);
-        text("فاصله‌ی x تا خودش برابر صفر است!\nاگر فاصله‌ی نقطه‌ی جدید تا x صفر باشد، نقطه‌ی جدید خود x است!", width/2, height - 50);
+        textSize(20);
+        text("فاصله: 0\n\n\n\n", width/2, height - 50);
+        fill(0,0,200);
+        textSize(20);
+        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.\n همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شیء تا نقطه‌ای دیگر مانند y را صفر اعلام کرد،\n بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height - 50);
       } else if (stage === 3) {
         text("نقطه Z را انتخاب کنید", width/2, 50);
       }
+      
+      if (stage === 4) {
+        textSize(16);
+        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 50);
+      }
+      
       // اگر حداقل دو نقطه واقعی داشته باشیم (X و Y)
       if (points.length >= 2) {
         let pX = points[0];
@@ -143,7 +170,8 @@
         textSize(20);
         textStyle(BOLD);
         text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
-        text("\n\nفاصله‌ی x تا y برابر است با فاصله‌ی y تا x (متقارن)", width/2, height - 80);
+        fill(0,0,200);
+        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 80);
 
         fill(100);
         textSize(16);
@@ -155,45 +183,43 @@
         textSize(20);
         textStyle(BOLD);
         text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
-        text("\n\n\nفاصله‌ی x تا y کمتر است از مجموع فاصله‌های y تا z و x تا z (نامساوی مثلث)", width/2, height - 80);
-
-        fill(100);
-        textSize(16);
-        if (stage === 4) {
-        }          text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, height - 50);
+        fill(0,0,200);
+        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 40);
       }
     }
 
     function mousePressed() {
-      if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
+  // جلوگیری از کلیک روی نوشته‌های بالا
+  if (mouseY < 120) return;
 
-      if (stage === 0) {
-        // مرحله ۱: نقطه X
-        points[0] = {x: mouseX, y: mouseY};
-        stage = 1;
+  // جلوگیری از کلیک روی نوشته‌های پایین
+  if (mouseY > height - 150) return;
 
-      } else if (stage === 1) {
-        // مرحله ۲: کلیک نزدیک به X
-        let d = dist(mouseX, mouseY, points[0].x, points[0].y);
-        if (d <= CALIBRATION_THRESHOLD) {
-          stage = 2; // تأیید شد، برو به Y
-        }
-      } else if (stage === 2) {
-        // مرحله ۳: نقطه Y
-        points[1] = {x: mouseX, y: mouseY};
-        stage = 3;
+  // --- کد اصلی تو ---
+  if (stage === 0) {
+    points[0] = {x: mouseX, y: mouseY};
+    stage = 1;
 
-      } else if (stage === 3) {
-        // مرحله ۴: نقطه Z
-        points[2] = {x: mouseX, y: mouseY};
-        stage = 4;
-
-      } else if (stage === 4) {
-        // ریست کامل
-        points = [];
-        stage = 0;
-      }
+  } else if (stage === 1) {
+    let d = dist(mouseX, mouseY, points[0].x, points[0].y);
+    if (d <= CALIBRATION_THRESHOLD) {
+      stage = 2;
     }
+
+  } else if (stage === 2) {
+    points[1] = {x: mouseX, y: mouseY};
+    stage = 3;
+
+  } else if (stage === 3) {
+    points[2] = {x: mouseX, y: mouseY};
+    stage = 4;
+
+  } else if (stage === 4) {
+    points = [];
+    stage = 0;
+  }
+}
+
 
     function windowResized() {
       resizeCanvas(windowWidth, windowHeight);

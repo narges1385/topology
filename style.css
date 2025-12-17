@@ -44,8 +44,22 @@ h1 {
     font-size: 3vw;
     font-weight: bold;
     padding: 3VW 0;
-    font-family: "Marhey", sans-serif;
+    font-family: "El Messiri", sans-serif;
 }
 .navbar li a:hover{
-    background-color: rgb(187, 245, 208);
+    background-color: rgb(140, 221, 170);
+    color: #060120;
+    border-radius: 2vw ;
+}
+
+.definition {
+    color: black;
+    font-family: "El Messiri", sans-serif;
+    overflow-wrap: anywhere;
+    padding: 0.5vw 2vw;
+    font-size: 3vw;
+}
+.distance{
+    font-weight: bold;
+    color: #184aa9;
 }
