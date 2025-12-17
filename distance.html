@@ -63,30 +63,30 @@
 
       // راهنمایی بر اساس مرحله
       fill(50);
-      textSize(18);
+      textSize(20);
       if (stage === 0) {
         text("نقطه X را انتخاب کنید", width/2, 50);
       } else if (stage === 1) {
         text("یک نقطه جدید روی X بزنید", width/2, 50);
         fill(200, 0, 0);
-        textSize(16);
+        textSize(20);
         text("\n\n\nباید دقیقا روی x باشد!", width/2, 50);
       } else if (stage === 2) {
         text("نقطه Y را انتخاب کنید", width/2, 50);
 
         fill(0);
-        textSize(20);
-        text("فاصله: 0\n\n\n\n", width/2, height - 50);
+        textSize(25);
+        text("فاصله: 0", width/2, height - 120);
         fill(0,0,200);
-        textSize(20);
-        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.\n همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شیء تا نقطه‌ای دیگر مانند y را صفر اعلام کرد،\n بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height - 50);
+        textSize(25);
+        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.\n همچنین مطلوب است اگر متر به گونه‌ای باشد که\n وقتی فاصله‌ی شیء تا نقطه‌ای دیگر مانند y را صفر اعلام کرد،\n بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height-30);
       } else if (stage === 3) {
         text("نقطه Z را انتخاب کنید", width/2, 50);
       }
       
       if (stage === 4) {
-        textSize(16);
-        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 50);
+        textSize(20);
+        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 10);
       }
       
       // اگر حداقل دو نقطه واقعی داشته باشیم (X و Y)
@@ -109,10 +109,10 @@
         fill(0, 80, 200, 230);
         rect(midX - 90, midY - 30, 180, 60, 15);
         fill(255);
-        textSize(22);
+        textSize(20);
         textStyle(BOLD);
         text(`${metersXY.toFixed(2)} متر`, midX, midY);
-        textSize(16);
+        textSize(20);
         text("X → Y", midX, midY + 25);
       }
 
@@ -135,7 +135,7 @@
         fill(100, 150, 255, 220);
         rect(midX - 60, midY - 20, 120, 40, 10);
         fill(255);
-        textSize(16);
+        textSize(20);
         text(`${metersYZ.toFixed(2)} متر`, midX, midY);
       }
 
@@ -158,7 +158,7 @@
         fill(150, 150, 150, 220);
         rect(midX - 60, midY - 20, 120, 40, 10);
         fill(255);
-        textSize(16);
+        textSize(20);
         text(`${metersXZ.toFixed(2)} متر`, midX, midY);
       }
       // نمایش بزرگ فاصله X به Y در پایین صفحه
@@ -167,24 +167,24 @@
         let metersXY = distXY / PIXELS_PER_METER;
 
         fill(0);
-        textSize(20);
+        textSize(25);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 120);
         fill(0,0,200);
-        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 80);
+        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 100);
 
         fill(100);
-        textSize(16);
+        textSize(25);
       } else if(points.length == 3){
         let distXY = dist(points[0].x, points[0].y, points[1].x, points[1].y);
         let metersXY = distXY / PIXELS_PER_METER;
 
         fill(0);
-        textSize(20);
+        textSize(25);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 80);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 120);
         fill(0,0,200);
-        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 40);
+        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 80);
       }
     }
 
