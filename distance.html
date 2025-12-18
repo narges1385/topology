@@ -65,14 +65,14 @@
       fill(50);
       textSize(33);
       if (stage === 0) {
-        text("نقطه X را انتخاب کنید", width/2, 50);
+        text("نقطه x را انتخاب کنید", width/2, 50);
       } else if (stage === 1) {
-        text("یک نقطه جدید روی X بزنید", width/2, 30);
+        text("یک نقطه جدید روی x بزنید", width/2, 30);
         fill(200, 0, 0);
         textSize(33);
         text("\n\n\nباید دقیقا روی x باشد!", width/2, 30);
       } else if (stage === 2) {
-        text("نقطه Y را انتخاب کنید", width/2, 50);
+        text("نقطه y را انتخاب کنید", width/2, 50);
 
         fill(0);
         textSize(40);
@@ -81,7 +81,7 @@
         textSize(40);
         text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء\n تا خودش را برابر صفر نشان دهد. همچنین مطلوب است\n اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای\n دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height-120);
       } else if (stage === 3) {
-        text("نقطه Z را انتخاب کنید", width/2, 50);
+        text("نقطه z را انتخاب کنید", width/2, 50);
       }
       
       if (stage === 4) {
@@ -113,8 +113,6 @@
         textSize(33);
         textStyle(BOLD);
         text(`${metersXY.toFixed(2)} متر`, midX, midY);
-        textSize(33);
-        text("X → Y", midX, midY + 25);
       }
 
       // خط و فاصله Y → Z
@@ -170,9 +168,13 @@
         fill(0);
         textSize(40);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 240);
+        text("فاصله                      ",width/2, height - 240);
+        text("(x تا y): ", width/2, height - 240);
+        text(`                          ${metersXY.toFixed(2)} متر`, width/2, height - 240);
         fill(0,0,200);
-        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 200);
+        text("\n\n\nتقارن:                          ", width/2, height - 250);
+        text("         d(x,y) = d(y,x)\n", width/2, height - 150);
+        text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 100);
 
         fill(100);
         textSize(40);
@@ -183,9 +185,12 @@
         fill(0);
         textSize(40);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 240);
+        text("فاصله                     ", width/2, height - 240);
+        text("(x تا y):", width/2, height - 240);
+        text(`                          ${metersXY.toFixed(2)}متر`, width/2, height - 240);
         fill(0,0,200);
-        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 120);
+        text(" نامساوی مثلث :                                    ", width/2, height - 160);
+        text("                            d(x,y) ≤ d(x,z) + d(z,y) ", width/2, height - 160);
       }
     }
 
