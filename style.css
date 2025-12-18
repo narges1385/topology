@@ -1,6 +1,5 @@
 body {
     margin: 0;
-    font-family: "El Messiri", sans-serif;
     background: #e1fafb;
     color: white; 
     direction: rtl; 
@@ -54,10 +53,10 @@ h1 {
 
 .definition {
     color: black;
-    font-family: "El Messiri", sans-serif;
     overflow-wrap: anywhere;
     padding: 0.5vw 2vw;
-    font-size: 3vw;
+    font-size: 4vw;
+    font-family: "Rubik", sans-serif;
 }
 .distance{
     font-weight: bold;
