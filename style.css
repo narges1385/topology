@@ -68,7 +68,7 @@ h1 {
   direction: rtl;
   font-family: Vazirmatn, Tahoma, sans-serif;
   line-height: 2.1;
-  font-size: 5vw;
+  font-size: 4vw;
   margin: 4vw;
   border-radius: 10vw;
   padding: 5vw;
@@ -83,6 +83,6 @@ h1 {
   font-weight: bold;
   margin-bottom: 10px;
   color: #00253d;
-  font-size: 6vw;
+  font-size: 5vw;
 }
 
