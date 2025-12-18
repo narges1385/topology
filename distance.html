@@ -16,7 +16,7 @@
     const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 30; // حداکثر فاصله مجاز برای کلیک دوم (نزدیک X)
     const TOP_UI_HEIGHT = 120;
-    const BOTTOM_UI_HEIGHT = 200;
+    const BOTTOM_UI_HEIGHT = 300;
 
 
     let stage = 0; // 0: منتظر X | 1: منتظر کلیک نزدیک X | 2: منتظر Y | 3: منتظر Z | 4: کامل
@@ -76,17 +76,18 @@
 
         fill(0);
         textSize(40);
-        text("فاصله: 0", width/2, height - 160);
+        text("فاصله: 0", width/2, height - 240);
         fill(0,0,200);
         textSize(40);
-        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء تا خودش را برابر صفر نشان دهد.\n همچنین مطلوب است اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شیء تا نقطه‌ای دیگر \nمانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height-70);
+        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء\n تا خودش را برابر صفر نشان دهد. همچنین مطلوب است\n اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای\n دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height-120);
       } else if (stage === 3) {
         text("نقطه Z را انتخاب کنید", width/2, 50);
       }
       
       if (stage === 4) {
         textSize(33);
-        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 10);
+        fill(100);
+        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 0.5);
       }
       
       // اگر حداقل دو نقطه واقعی داشته باشیم (X و Y)
@@ -169,9 +170,9 @@
         fill(0);
         textSize(40);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 160);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 240);
         fill(0,0,200);
-        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 140);
+        text("\n\n\nتقارن: d(x,y) = d(y,x)\nیعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 200);
 
         fill(100);
         textSize(40);
@@ -182,9 +183,9 @@
         fill(0);
         textSize(40);
         textStyle(BOLD);
-        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 160);
+        text(`فاصله (x تا y): ${metersXY.toFixed(2)} متر`, width/2, height - 240);
         fill(0,0,200);
-        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 100);
+        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)", width/2, height - 120);
       }
     }
 
