@@ -10,25 +10,23 @@
   
   <!-- استایل صفحه برای ظاهر زیبا -->
   <style>
-    body { margin: 0; font-family: Tahoma; background: #f0f0f0; }
-    #container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; }
+    body {  margin: 0; font-family: Tahoma; background: rgb(255, 255, 255); }
+    .container { max-width: 935px; margin-top: 0.5vw; margin-bottom: 5vw; background-color: rgb(123, 165, 207); padding: 20px; border-radius: 10px; }
     .controls { text-align: center; margin: 20px; }
     select, input, label, button { padding: 10px; margin: 5px; font-size: 16px; }
-    button { background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #c0392b; }
+    button { background: #979797; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #979797; }
   </style>
 </head>
 <body>
   <!-- ظرف اصلی صفحه -->
-  <div id="container">
-    <h1 style="text-align:center;">فضای متریک تعاملی (۲D / ۳D)</h1>
-    <p style="text-align:center;">با دکمه زیر بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
-    
+    <div class="container">
+    <p style="display: inline; padding-right: 10vw;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
+    <button id="modeButton">حالت دوبعدی</button>
+    <p style="display: inline;">(با چرخاندن شکل سه‌بعدی آن را بهتر مشاهده کنید)</p>
     <!-- کنترل‌های کاربر -->
     <div class="controls">
-      <!-- دکمه تغییر حالت (از ۳D به ۲D و برعکس) -->
-      <button id="modeButton">حالت دوبعدی</button>
-      
+            
       <!-- انتخاب نوع متریک -->
       <label>متریک:</label>
       <select id="metricSelect">
@@ -43,7 +41,7 @@
       <span id="radiusValue">150</span>
       
       <!-- چک‌باکس برای نمایش لبه‌ها (wireframe) -->
-      <label><input type="checkbox" id="wireframe"> نمایش لبه‌ها (پررنگ)</label>
+      <label><input type="checkbox" id="wireframe"> نمایش لبه‌ها</label>
     </div>
   </div>
 
@@ -74,13 +72,18 @@
     const sketch3D = (p) => {
       p.setup = () => {
         // ایجاد canvas سه‌بعدی با اندازه ۸۰۰×۶۰۰
-        let canvas = p.createCanvas(800, 600, p.WEBGL);
-        canvas.parent('container');  // قرار دادن canvas داخل ظرف اصلی صفحه
+        let canvas = p.createCanvas(900, 600, p.WEBGL);
       };
+
+      
 
       p.draw = () => {
         p.background(240);                    // رنگ پس‌زمینه خاکستری روشن
         p.orbitControl(1, 1, 0);              // فعال کردن چرخش با موس (زوم غیرفعال با ۰)
+
+        p.rotateX(-p.PI / 6);
+        p.rotateY(p.PI / 4);
+
 
         // نورپردازی صحنه
         p.ambientLight(100);                  // نور محیطی
@@ -98,10 +101,10 @@
         // تنظیم ظاهر بر اساس حالت wireframe
         if (showWire) {
           p.noFill();          // بدون پر کردن داخل شکل
-          p.stroke(0);         // لبه‌ها مشکی
-          p.strokeWeight(4);   // ضخامت زیاد برای وضوح
+          p.stroke(196, 152, 88);         // لبه‌ها مشکی
+          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
         } else {
-          p.fill(255, 140, 0, 160);  // رنگ نارنجی شفاف
+          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
           p.noStroke();             // بدون لبه داخلی
         }
 
@@ -133,8 +136,7 @@
     // تعریف اسکچ حالت دوبعدی
     const sketch2D = (p) => {
       p.setup = () => {
-        let canvas = p.createCanvas(800, 600);  // canvas دوبعدی
-        canvas.parent('container');
+        let canvas = p.createCanvas(900, 600);  // canvas دوبعدی
       };
 
       p.draw = () => {
@@ -150,12 +152,12 @@
         p.scale(r / 150);  // تنظیم اندازه بر اساس اسلایدر
 
         if (showWire) {
-          p.noFill();
-          p.stroke(0);
-          p.strokeWeight(4);
+          p.noFill();          // بدون پر کردن داخل شکل
+          p.stroke(196, 152, 88);         // لبه‌ها مشکی
+          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
         } else {
-          p.fill(255, 140, 0, 160);
-          p.noStroke();
+          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
+          p.noStroke();             // بدون لبه داخلی
         }
 
         // رسم شکل دوبعدی بر اساس متریک

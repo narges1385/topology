@@ -50,6 +50,11 @@ h1 {
     color: #060120;
     border-radius: 2vw ;
 }
+.navbar li a:active{
+    background-color: rgb(140, 221, 170);
+    color: #060120;
+    border-radius: 2vw ;
+}
 
 .definition {
     color: black;
@@ -64,7 +69,7 @@ h1 {
 }
 .math-content {
   color: #0a2a51;
-  background-color: rgb(175, 223, 206);
+  background-color: rgba(175, 223, 206, 0.731);
   direction: rtl;
   font-family: Vazirmatn, Tahoma, sans-serif;
   line-height: 2.1;
@@ -72,17 +77,22 @@ h1 {
   margin: 4vw;
   border-radius: 10vw;
   padding: 5vw;
+  box-shadow: 0 0 10px #232a50;
 }
 
 .math-content p {
   margin: 12px 0;
 }
 
-.math-content .definition-title {
+ .definition-title {
+  font-family: Vazirmatn, Tahoma, sans-serif;
   text-align: center;
   font-weight: bold;
   margin-bottom: 10px;
   color: #00253d;
   font-size: 5vw;
+  padding-top: 6vw;
 }
-
+h3{
+    text-align: center;
+}

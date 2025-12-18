@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>فضای متریک بر اساس Norm</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+
+  <style>
+    body {  margin: 0; font-family: Tahoma; background: rgb(255, 255, 255); }
+    .container { max-width: 935px; margin-top: 0.5vw; background-color: rgb(123, 165, 207); padding: 20px; border-radius: 10px; }
+    .controls { text-align: center; margin: 20px; }
+    select, input, label, button { padding: 10px; margin: 5px; font-size: 16px; }
+    button { background: #979797; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #979797; }
+
+    button, input, label {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+    #spaceBox {
+      text-align: center;
+      margin-bottom: 2vw;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      border: 2px dashed #30426e;
+      font-size: 18px;
+      font-weight: bold;
+      color: #30426e;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- کنترل‌ها -->
+  
+    <p style="display: inline; padding-right: 10vw;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
+    <button id="modeButton">حالت دوبعدی</button>
+    <p style="display: inline;">(با چرخاندن شکل سه‌بعدی آن را بهتر مشاهده کنید)</p>    <br><br>
+<div class="controls">
+    <label>Norm (p):</label>
+    <input type="range" id="normSlider" min="1" max="10" step="0.1" value="2">
+    <span id="normValue">2.0</span>
+
+    <br><br>
+
+    <label>
+      <input type="checkbox" id="wireframe">
+      نمایش لبه‌ها (Wireframe)
+    </label>  
+  </div>
+
+</div>
+
+<div id="spaceBox">
+     فضای متریک: <span id="spaceName">اقلیدسی (L2)</span>
+</div>
+
+<script>
+/* =====================
+   متغیرها
+===================== */
+let pNorm = 2;
+let is3D = true;
+let showWire = false;
+let p5Instance = null;
+const R = 160;
+
+/* =====================
+   تشخیص فضا
+===================== */
+function detectSpace(p) {
+  if (Math.abs(p - 1) < 0.05) return 'منهتن (L1)';
+  if (Math.abs(p - 2) < 0.05) return 'اقلیدسی (L2)';
+  if (p >= 9.5) return 'چبیشف (L∞)';
+  return 'فضای Lp عمومی';
+}
+
+/* =====================
+   ساخت اسکچ
+===================== */
+function createSketch() {
+  if (p5Instance) p5Instance.remove();
+  p5Instance = is3D ? new p5(sketch3D) : new p5(sketch2D);
+}
+
+/* =====================
+   اسکچ سه‌بعدی
+===================== */
+const sketch3D = (p) => {
+  p.setup = () => {
+    let canvas = p.createCanvas(800, 600, p.WEBGL);
+    p.pixelDensity(1);
+  };
+
+  p.draw = () => {
+    p.background(240);
+
+    // چرخش بدون زوم
+    p.orbitControl(1, 1, 0);
+
+    p.rotateX(-p.PI / 6);
+    p.rotateY(p.PI / 4);
+
+
+    p.ambientLight(120);
+    p.directionalLight(255, 255, 255, 0, 0, -1);
+
+    // محورها
+    p.strokeWeight(3);
+    p.stroke(255,0,0); p.line(-300,0,0,300,0,0);
+    p.stroke(0,255,0); p.line(0,-300,0,0,300,0);
+    p.stroke(0,0,255); p.line(0,0,-300,0,0,300);
+
+    p.push();
+    p.scale(R);
+
+    if (showWire) {
+          p.noFill();          // بدون پر کردن داخل شکل
+          p.stroke(196, 152, 88);         // لبه‌ها مشکی
+          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
+        } else {
+          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
+          p.noStroke();             // بدون لبه داخلی
+        }
+
+    // تقریب توپ Lp
+    let res = 28;
+    p.beginShape(p.TRIANGLES);
+    for (let i = 0; i < res; i++) {
+      let t1 = p.map(i, 0, res, -p.HALF_PI, p.HALF_PI);
+      let t2 = p.map(i+1, 0, res, -p.HALF_PI, p.HALF_PI);
+
+      for (let j = 0; j < res; j++) {
+        let p1 = p.map(j, 0, res, -p.PI, p.PI);
+        let p2 = p.map(j+1, 0, res, -p.PI, p.PI);
+
+        let v = (th, ph) => {
+          let x = Math.sign(Math.cos(th)*Math.cos(ph)) * Math.pow(Math.abs(Math.cos(th)*Math.cos(ph)), 2/pNorm);
+          let y = Math.sign(Math.cos(th)*Math.sin(ph)) * Math.pow(Math.abs(Math.cos(th)*Math.sin(ph)), 2/pNorm);
+          let z = Math.sign(Math.sin(th)) * Math.pow(Math.abs(Math.sin(th)), 2/pNorm);
+          return [x, y, z];
+        };
+
+        let a = v(t1, p1), b = v(t2, p1), c = v(t2, p2), d = v(t1, p2);
+
+        p.vertex(...a); p.vertex(...b); p.vertex(...c);
+        p.vertex(...a); p.vertex(...c); p.vertex(...d);
+      }
+    }
+    p.endShape();
+    p.pop();
+  };
+};
+
+/* =====================
+   اسکچ دوبعدی
+===================== */
+const sketch2D = (p) => {
+  p.setup = () => {
+    let canvas = p.createCanvas(800, 600);
+    p.pixelDensity(1);
+  };
+
+  p.draw = () => {
+    p.background(240);
+    p.translate(p.width/2, p.height/2);
+
+    // محورها
+    p.strokeWeight(3);
+    p.stroke(255,0,0); p.line(-400,0,400,0);
+    p.stroke(0,255,0); p.line(0,-300,0,300);
+
+    if (showWire) {
+          p.noFill();          // بدون پر کردن داخل شکل
+          p.stroke(196, 152, 88);         // لبه‌ها مشکی
+          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
+        } else {
+          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
+          p.noStroke();             // بدون لبه داخلی
+        }
+
+    p.beginShape();
+    for (let a = 0; a <= p.TWO_PI + 0.01; a += 0.01) {
+      let x = Math.sign(Math.cos(a)) * Math.pow(Math.abs(Math.cos(a)), 2/pNorm);
+      let y = Math.sign(Math.sin(a)) * Math.pow(Math.abs(Math.sin(a)), 2/pNorm);
+      p.vertex(x * R, y * R);
+    }
+    p.endShape(p.CLOSE);
+  };
+};
+
+/* =====================
+   رویدادها
+===================== */
+createSketch();
+
+document.getElementById('modeButton').onclick = () => {
+  is3D = !is3D;
+  document.getElementById('modeButton').innerText =
+    is3D ? 'حالت دوبعدی' : 'حالت سه‌بعدی';
+  createSketch();
+};
+
+document.getElementById('normSlider').oninput = (e) => {
+  pNorm = parseFloat(e.target.value);
+  document.getElementById('normValue').innerText = pNorm.toFixed(1);
+  document.getElementById('spaceName').innerText = detectSpace(pNorm);
+};
+
+document.getElementById('wireframe').onchange = (e) => {
+  showWire = e.target.checked;
+};
+</script>
+</body>
+</html>
