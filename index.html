@@ -6,8 +6,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Handjet:wght,ELSH@100..900,2&family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Handjet:wght,ELSH@100..900,2&family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -24,8 +25,66 @@
   <p class="definition">
     <span class="distance">فاصله</span> یکی از بنیادی ترین مفاهیم ریاضی است که در ظاهر ساده به نظر میرسد. مستقل از آنکه معیاری برای سنجش دور یا نزدیک بودن نقاط یا اشیاء در خط، صفحه یا فضای سه‌بعدی وجود داشته یا نداشته باشد، با اندکی تعمق، میتوان خواص اساسی مفهوم فاصله را دریافت. برای آنکه دیدگاه خود را از هندسه‌ی اقلیدسی کاملا مستقل نماییم، تصور میکنیم که در فضایی دیگر هستیم و منظور از متر ابزاری است که برای سنجیدن فاصله‌ی دو شی(که ممکن است هر چیزی باشند) به کار می‌بریم. اگر در این فضا ابزاری به نام متر به دست ما دهند، برای آنکه کمیت اندازه‌گیری شده توسط این متر برای ما قابل درک باشد و بتوانیم کم یا زیاد بودن فاصله را تخمین بزنیم، توقع داریم که این متر، با اعداد حقیقی مدرج شده باشد. 
   </p>
-  <iframe 
-    src="distance.html" width="100%" height="900" scrolling="no"></iframe>
+  <iframe src="distance.html" width="100%" height="900" scrolling="no"></iframe>
+  <p class="definition">
+    این چهار خاصیت اساس تعریف فاصله یا متر می‌باشد.
+  </p>
+  <div class="math-content">
+
+  <div class="definition-title">
+    تعریف متر و فضای متریک
+  </div>
+
+  <p>
+    فرض کنیم \( X \) مجموعه‌ای دلخواه باشد.
+    تابع
+  </p>
+
+  <p>
+    $$
+    d : X \times X \longrightarrow \mathbb{R}
+    $$
+  </p>
+
+  <p>
+    را یک <strong>متریک</strong> یا <strong>متر</strong> روی \( X \) می‌نامیم هرگاه شرایط زیر برقرار باشد:
+  </p>
+
+  <p>
+    i) به ازای هر \( x , y \in X \) داشته باشیم:
+    $$
+    d(x,y) \ge 0
+    $$
+  </p>
+
+  <p>
+    ii) به ازای هر \( x , y \in X \) داشته باشیم:
+    $$
+    d(x,y) = 0 \iff x = y
+    $$
+  </p>
+
+  <p>
+    iii) به ازای هر \( x , y \in X \) داشته باشیم:
+    $$
+    d(x,y) = d(y,x)
+    $$
+  </p>
+
+  <p>
+    iv) به ازای هر \( x , y , z \in X \) داشته باشیم:
+    $$
+    d(x,y) \le d(x,z) + d(z,y)
+    $$
+    (نامساوی مثلث)
+  </p>
+
+  <p>
+    در صورتی که d یک متر روی \( X \) باشد \((X,d)\) یک <strong>فضای متریک</strong> می‌نامیم و می‌گوییم فضای \( X \) به متر d مجهز شده است.
+  </p>
+
+</div>
+
 
   <script src="script.js"></script>
 </body>

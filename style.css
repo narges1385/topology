@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background: #e1fafb;
+    background: #abccdf;
     color: white; 
     direction: rtl; 
 }
@@ -32,7 +32,7 @@ h1 {
 .navbar li{
     flex: 1;
     margin: 0.9vw 0.3vw;
-    background-color: #061a38ce;
+    background-color: #152f55ce;
     border-radius: 1.5vw ;
 }
 .navbar li a{
@@ -62,3 +62,27 @@ h1 {
     font-weight: bold;
     color: #184aa9;
 }
+.math-content {
+  color: #0a2a51;
+  background-color: rgb(175, 223, 206);
+  direction: rtl;
+  font-family: Vazirmatn, Tahoma, sans-serif;
+  line-height: 2.1;
+  font-size: 5vw;
+  margin: 4vw;
+  border-radius: 10vw;
+  padding: 5vw;
+}
+
+.math-content p {
+  margin: 12px 0;
+}
+
+.math-content .definition-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #00253d;
+  font-size: 6vw;
+}
+
