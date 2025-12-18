@@ -18,7 +18,7 @@ body {
 }
 h1 { 
     font-size: 10vw; 
-    text-shadow: 0.5vw 0.5vw #061a38, -0.5vw -0.5vw #061a38; 
+    text-shadow: 3.75px 3.75px #061a38, -3.75px -3.75px #061a38; 
     font-family: "Marhey", sans-serif;
 }
 .navbar{
@@ -31,31 +31,31 @@ h1 {
 }
 .navbar li{
     flex: 1;
-    margin: 0.9vw 0.3vw;
+    margin: 6.75px 2.25px;
     background-color: #061a38ce;
-    border-radius: 1.5vw ;
+    border-radius: 11.25px ;
 }
 .navbar li a{
     display: flex;
     justify-content: center;
     text-decoration: none;
     color: rgb(210, 211, 206);
-    font-size: 3vw;
+    font-size: 22.5px;
     font-weight: bold;
-    padding: 3VW 0;
+    padding: 22.5px 0;
     font-family: "El Messiri", sans-serif;
 }
 .navbar li a:hover{
     background-color: rgb(140, 221, 170);
     color: #060120;
-    border-radius: 2vw ;
+    border-radius: 15px ;
 }
 
 .definition {
     color: black;
     overflow-wrap: anywhere;
-    padding: 0.5vw 2vw;
-    font-size: 4vw;
+    padding:3.75px 15px;
+    font-size: 30px;
     font-family: "Rubik", sans-serif;
 }
 .distance{
