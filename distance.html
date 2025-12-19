@@ -17,6 +17,10 @@
     const CALIBRATION_THRESHOLD = 30; // حداکثر فاصله مجاز برای کلیک دوم (نزدیک X)
     const TOP_UI_HEIGHT = 120;
     const BOTTOM_UI_HEIGHT = 300;
+    const UI_RADIUS = 20;
+    const UI_MARGIN = 10;   // حاشیه سفید دور باکس
+
+
 
 
     let stage = 0; // 0: منتظر X | 1: منتظر کلیک نزدیک X | 2: منتظر Y | 3: منتظر Z | 4: کامل
@@ -31,17 +35,46 @@
       background(240);
 
   // ناحیه غیرقابل کلیک بالا
-  noStroke();
-  fill(123, 165, 207);
-  rect(0, 0, width, TOP_UI_HEIGHT);
+  // ناحیه غیرقابل کلیک بالا (آبی با حاشیه سفید)
+noStroke();
+fill(240); // پس‌زمینه کلی
+rect(0, 0, width, TOP_UI_HEIGHT);
+
+fill(123, 165, 207); // آبی
+rect(
+  UI_MARGIN,
+  UI_MARGIN,
+  width - 2 * UI_MARGIN,
+  TOP_UI_HEIGHT - UI_MARGIN,
+  UI_RADIUS
+);
+
 
   // ناحیه کلیک‌پذیر (وسط)
-  fill(255);
-  rect(0, TOP_UI_HEIGHT, width, height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT);
+  // ناحیه کلیک‌پذیر وسط
+fill(255);
+rect(
+  0,
+  TOP_UI_HEIGHT,
+  width,
+  height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT
+);
+
 
   // ناحیه غیرقابل کلیک پایین
-  fill(123, 165, 207);
-  rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
+  // ناحیه غیرقابل کلیک پایین (آبی با حاشیه سفید)
+fill(240);
+rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
+
+fill(123, 165, 207); // آبی
+rect(
+  UI_MARGIN,
+  height - BOTTOM_UI_HEIGHT + UI_MARGIN,
+  width - 2 * UI_MARGIN,
+  BOTTOM_UI_HEIGHT - 2 * UI_MARGIN,
+  UI_RADIUS
+);
+
 
 
 
