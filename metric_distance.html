@@ -17,6 +17,7 @@ button:hover{background:#979797;}
 .coords{font-size:3vw;margin:5px;}
 .coord-input{width:60px;}
 .tip{color:#2127d6;font-size:3vw;margin-top:10px;line-height:1.5;}
+label{font-size: 3vw;}
 </style>
 </head>
 <body>
@@ -26,9 +27,8 @@ button:hover{background:#979797;}
 <p id="distance">فاصله: ۰</p>
 
 <div class="controls">
-  <p style="display: inline;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
+  <p style="display: inline; font-size: 3vw;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
 <button onclick="switchDimension()">2D / 3D</button>
-<p style="display: inline;">(با چرخاندن شکل سه‌بعدی آن را بهتر مشاهده کنید)</p>
 <label>متریک:</label>
 <select id="metricSelect">
 <option value="euclidean">اقلیدسی</option>
@@ -41,7 +41,7 @@ button:hover{background:#979797;}
 </div>
 
 <div class="controls">
-<p>مختصات نقاط:</p>
+<p style="font-size: 3vw;">مختصات نقاط:</p>
 <div class="coords">
 P1: X <input type="number" id="x1" class="coord-input"> 
     Y <input type="number" id="y1" class="coord-input"> 
