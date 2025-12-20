@@ -113,3 +113,13 @@ h1 {
 h3{
     text-align: center;
 }
+.reference{
+    padding-top: 2vw;
+    font-size: 3vw;
+    padding-right: 5vw;
+    color: rgb(83, 83, 83);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif !important;
+}
+.name{
+    font-size: 2.8vw;
+}
