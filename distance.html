@@ -6,6 +6,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
     body { margin: 0; direction: rtl; font-family: Tahoma, sans-serif; background: #f0f0f0; }
+    #display {
+  direction: ltr;
+}
+
   </style>
 </head>
 <body>
@@ -206,8 +210,12 @@ rect(
         text(`                          ${metersXY.toFixed(2)} متر`, width/2, height - 240);
         fill(0,0,200);
         
+        push();
+        textAlign(CENTER, TOP);
+        textFont("Courier New");
         text("\n\n\n    تقارن: d(x,y) = d(y,x)\n", width/2, height - 220);
         text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 100);
+        pop();
 
         fill(100);
         textSize(40);
@@ -221,8 +229,12 @@ rect(
         text("فاصله                     ", width/2, height - 240);
         text("(x تا y):", width/2, height - 240);
         text(`                          ${metersXY.toFixed(2)}متر`, width/2, height - 240);
+        push();
+        textAlign(CENTER, TOP);
+        textFont("Courier New");
         fill(0,0,200);
         text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)  ", width/2, height - 160);
+        pop();
       }
     }
 
