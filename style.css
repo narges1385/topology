@@ -1,82 +1,79 @@
-*{
+* {
     box-sizing: border-box;
 }
+
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    overflow-x: visible;
-}
-html{
-    scroll-behavior: smooth;
-}
-body {
-  margin: 0;
-  background: #f4f4f4; /* پس‌زمینه اطراف */
 }
 
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     margin: 0;
     background: #abccdf;
-    color: white; 
-    direction: rtl; 
+    color: white;
+    direction: rtl;
 }
+
 #header-canvas { 
     width: 100%; 
     height: 600px; 
-} /* ارتفاع هدر */
+}
+
 .overlay { 
     position: absolute; 
     top: 170px; 
     width: 100%; 
     text-align: center; 
-    color : #9b9b9b;
+    color: #9b9b9b;
     pointer-events: none;
 }
+
 h1 { 
     font-size: 80px; 
     text-shadow: 0.5vw 0.5vw #061a38, -0.5vw -0.5vw #061a38; 
     font-family: "Marhey", sans-serif;
 }
-.navbar{
+
+.navbar {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     width: 100%;
     background-color: #060120;
-
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
-.navbar li{
+.navbar li {
     flex: 1;
     margin: 0.9vw 0.3vw;
     background-color: #152f55ce;
-    border-radius: 1.5vw ;
+    border-radius: 1.5vw;
 }
-.navbar li a{
+
+.navbar li a {
     display: flex;
     justify-content: center;
     text-decoration: none;
     color: rgb(210, 211, 206);
     font-size: 3vw;
     font-weight: bold;
-    padding: 3VW 0;
+    padding: 3vw 0;
     font-family: "El Messiri", sans-serif;
 }
-.navbar li a:hover{
+
+.navbar li a:hover,
+.navbar li a:active {
     background-color: rgb(140, 221, 170);
     color: #060120;
-    border-radius: 2vw ;
-}
-.navbar li a:active{
-    background-color: rgb(140, 221, 170);
-    color: #060120;
-    border-radius: 2vw ;
+    border-radius: 2vw;
 }
 
 .definition {
@@ -86,53 +83,57 @@ h1 {
     font-size: 4vw;
     font-family: "Rubik", sans-serif;
 }
-.distance{
+
+.distance {
     font-weight: bold;
     color: #184aa9;
 }
+
 .math-content {
-  color: #0a2a51;
-  background-color: rgba(175, 223, 206, 0.731);
-  direction: rtl;
-  font-family: Vazirmatn, Tahoma, sans-serif;
-  line-height: 2.1;
-  font-size: 40px;
-  margin: 40px;
-  border-radius: 10vw;
-  padding: 5vw;
-  box-shadow: 0 0 10px #232a50;
+    color: #0a2a51;
+    background-color: rgba(175, 223, 206, 0.731);
+    direction: rtl;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+    line-height: 2.1;
+    font-size: 40px;
+    margin: 40px;
+    border-radius: 10vw;
+    padding: 5vw;
+    box-shadow: 0 0 10px #232a50;
 }
 
 .math-content p {
-  margin: 12px 0;
+    margin: 12px 0;
 }
 
 .definition-title {
-  font-family: Vazirmatn, Tahoma, sans-serif;
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #00253d;
-  font-size: 5vw;
-  padding-top: 6vw;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #00253d;
+    font-size: 5vw;
+    padding-top: 6vw;
 }
-h3{
+
+h3 {
     text-align: center;
 }
-.reference{
+
+.reference {
     padding-top: 2vw;
     font-size: 3vw;
     padding-right: 5vw;
     color: rgb(83, 83, 83);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif !important;
 }
-.name{
+
+.name {
     font-size: 2.8vw;
 }
+
 /* ================= DESKTOP FIX ================= */
 @media (min-width: 1024px) {
-
-    /* فونت‌ها */
     h1 {
         font-size: 48px;
         text-shadow: 6px 6px #061a38, -6px -6px #061a38;
@@ -170,68 +171,61 @@ h3{
         font-size: 16px;
     }
 
-    /* navbar فاصله‌ها */
     .navbar li {
         margin: 8px 6px;
         border-radius: 14px;
     }
 
-    /* iframe */
-    iframe {
-        max-width: 100%;
-        height: auto;
-    }
-
-    /* جلوگیری از کش آمدن */
     body {
         overflow-x: hidden;
     }
 }
+
+/* ================= iframe کاملاً Responsive (روش مدرن با aspect-ratio) ================= */
 .iframe-container {
-  position: relative;
-  width: 100%;        /* آیفریم همیشه عرض 100% والد را می‌گیرد */
-  max-width: 800px;   /* حداکثر عرض (می‌توانید تنظیم کنید) */
-  aspect-ratio: 16 / 9; /* نسبت تصویر (می‌توانید تغییر دهید) */
-  margin: 0 auto;     /* وسط‌چین کردن در لپ‌تاپ */
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+    aspect-ratio: 16 / 9; /* نسبت پیش‌فرض برای اکثر شبیه‌سازها */
 }
 
 .iframe-container iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-/* ================= iframe کاملاً Responsive ================= */
-.iframe-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;     /* حداکثر عرض در دسکتاپ */
-  margin: 40px auto;     /* فاصله عمودی و وسط‌چین */
-  padding-bottom: 56.25%; /* نسبت 16:9 (برای اکثر شبیه‌سازها عالیه) */
-  height: 0;
-  overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background: #fff;      /* پس‌زمینه سفید تا بارگذاری */
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
 }
 
-.iframe-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
+/* کلاس‌های اضافی برای نسبت‌های مختلف */
+.iframe-container.square {
+    aspect-ratio: 1 / 1;
 }
 
-/* برای شبیه‌سازهایی که مربعی یا عمودی‌تر هستن (مثل norm.html یا metric_checker.html) */
-.iframe-wrapper.square {
-  padding-bottom: 80%;   /* تقریباً مربعی */
+.iframe-container.tall {
+    aspect-ratio: 3 / 4;
 }
 
-.iframe-wrapper.tall {
-  padding-bottom: 100%;  /* عمودی‌تر، مثلاً برای کوییز */
+.iframe-container.short {
+    aspect-ratio: 16 / 10;
 }
 
-.iframe-wrapper.short {
-  padding-bottom: 45%;   /* کوتاه‌تر، اگر لازم شد */
+/* برای مرورگرهای قدیمی‌تر که aspect-ratio را پشتیبانی نمی‌کنند (اختیاری) */
+@supports not (aspect-ratio: 1) {
+    .iframe-container {
+        padding-bottom: 56.25%; /* 16:9 */
+        height: 0;
+    }
+    .iframe-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .iframe-container.square { padding-bottom: 100%; }
+    .iframe-container.tall   { padding-bottom: 133.33%; } /* 3:4 */
+    .iframe-container.short  { padding-bottom: 62.5%; }   /* 16:10 */
 }
