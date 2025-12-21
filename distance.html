@@ -6,263 +6,191 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
     body { margin: 0; direction: rtl; font-family: Tahoma, sans-serif; background: #f0f0f0; }
-    
   </style>
 </head>
 <body>
   <script>
-    let points = []; // [X, dummy_click_near_X, Y, Z] — فقط ۳ نقطه واقعی ذخیره می‌شه
-    const PIXELS_PER_METER = 100; // هر ۱۰۰ پیکسل = ۱ متر
+    let points = [];
+    const PIXELS_PER_METER = 100;
     const CIRCLE_RADIUS = 15;
     const labels = ['x', 'y', 'z'];
-    const CALIBRATION_THRESHOLD = 30; // حداکثر فاصله مجاز برای کلیک دوم (نزدیک X)
-    const TOP_UI_HEIGHT = 120;
-    const BOTTOM_UI_HEIGHT = 300;
+    const CALIBRATION_THRESHOLD = 40;
+
+    // ارتفاع نوارها رو کمتر کردیم تا ناحیه سفید بزرگتر بشه
+    const TOP_UI_HEIGHT = 80;
+    const BOTTOM_UI_HEIGHT = 180;
     const UI_RADIUS = 20;
-    const UI_MARGIN = 10;   // حاشیه سفید دور باکس
+    const UI_MARGIN = 10;
 
-
-
-
-    let stage = 0; // 0: منتظر X | 1: منتظر کلیک نزدیک X | 2: منتظر Y | 3: منتظر Z | 4: کامل
+    let stage = 0;
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
-      background(240);
       textAlign(CENTER, CENTER);
     }
 
     function draw() {
       background(240);
 
-  // ناحیه غیرقابل کلیک بالا
-  // ناحیه غیرقابل کلیک بالا (آبی با حاشیه سفید)
-noStroke();
-fill(240); // پس‌زمینه کلی
-rect(0, 0, width, TOP_UI_HEIGHT);
+      // ناحیه بالا (آبی با حاشیه سفید)
+      noStroke();
+      fill(240);
+      rect(0, 0, width, TOP_UI_HEIGHT);
 
-fill(123, 165, 207); // آبی
-rect(
-  UI_MARGIN,
-  UI_MARGIN,
-  width - 2 * UI_MARGIN,
-  TOP_UI_HEIGHT - UI_MARGIN,
-  UI_RADIUS
-);
+      fill(123, 165, 207);
+      rect(UI_MARGIN, UI_MARGIN, width - 2 * UI_MARGIN, TOP_UI_HEIGHT - UI_MARGIN, UI_RADIUS);
 
+      // ناحیه وسط سفید — حالا خیلی بزرگه
+      fill(255);
+      rect(0, TOP_UI_HEIGHT, width, height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT);
 
-  // ناحیه کلیک‌پذیر (وسط)
-  // ناحیه کلیک‌پذیر وسط
-fill(255);
-rect(
-  0,
-  TOP_UI_HEIGHT,
-  width,
-  height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT
-);
+      // ناحیه پایین (آبی با حاشیه سفید)
+      fill(240);
+      rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
 
+      fill(123, 165, 207);
+      rect(UI_MARGIN, height - BOTTOM_UI_HEIGHT + UI_MARGIN, width - 2 * UI_MARGIN, BOTTOM_UI_HEIGHT - 2 * UI_MARGIN, UI_RADIUS);
 
-  // ناحیه غیرقابل کلیک پایین
-  // ناحیه غیرقابل کلیک پایین (آبی با حاشیه سفید)
-fill(240);
-rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
-
-fill(123, 165, 207); // آبی
-rect(
-  UI_MARGIN,
-  height - BOTTOM_UI_HEIGHT + UI_MARGIN,
-  width - 2 * UI_MARGIN,
-  BOTTOM_UI_HEIGHT - 2 * UI_MARGIN,
-  UI_RADIUS
-);
-
-
-
-
-      // رسم دایره‌های نقاط واقعی (فقط X, Y, Z)
-      for (let i = 0; i < Math.min(points.length, 3); i++) {
+      // رسم نقاط
+      for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        if (i === 0) { // X
-          stroke(200, 0, 0); fill(255, 100, 100);
-        } else if (i === 1) { // Y
-          stroke(0, 100, 200); fill(100, 180, 255);
-        } else { // Z
-          stroke(0, 150, 0); fill(100, 220, 100);
-        }
+        if (i === 0) { stroke(200, 0, 0); fill(255, 100, 100); }
+        else if (i === 1) { stroke(0, 100, 200); fill(100, 180, 255); }
+        else { stroke(0, 150, 0); fill(100, 220, 100); }
+
         strokeWeight(4);
         ellipse(p.x, p.y, CIRCLE_RADIUS * 2);
         fill(255); noStroke(); ellipse(p.x, p.y, 8, 8);
-        fill(0); textSize(18); textStyle(BOLD); text(labels[i], p.x, p.y);
-      }
-
-      // راهنمایی بر اساس مرحله
-      fill(50);
-      textSize(33);
-      if (stage === 0) {
-        text("نقطه x را انتخاب کنید", width/2, 50);
-      } else if (stage === 1) {
-        text("یک نقطه جدید روی x بزنید", width/2, 30);
-        fill(200, 0, 0);
-        textSize(33);
-        text("\n\n\nباید دقیقا روی x باشد!", width/2, 30);
-      } else if (stage === 2) {
-        text("نقطه y را انتخاب کنید", width/2, 50);
-
         fill(0);
-        textSize(40);
-        text("فاصله: 0", width/2, height - 240);
-        fill(0,0,200);
-        textSize(40);
-        text("اگر شیء در نقطه‌ی x باشد، متر باید فاصله‌ی شیء\n تا خودش را برابر صفر نشان دهد. همچنین مطلوب است\n اگر متر به گونه‌ای باشد که وقتی فاصله‌ی شی تا نقطه‌ای\n دیگر مانند y را صفر اعلام کرد، بتوانیم بگوییم شیء در نقطه‌ی y است.", width/2, height-120);
+        textSize(18);
+        textStyle(BOLD);
+        text(labels[i], p.x, p.y);
+      }
+
+      // راهنمایی بالا — فونت کوچکتر و responsive
+      fill(50);
+      textSize(constrain(width / 35, 16, 28));
+
+      if (stage === 0) {
+        text("نقطه x را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
+      } else if (stage === 1) {
+        fill(200, 0, 0);
+        text("دوباره نزدیک به نقطه x کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
+      } else if (stage === 2) {
+        fill(50);
+        text("نقطه y را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 3) {
-        text("نقطه z را انتخاب کنید", width/2, 50);
+        text("نقطه z را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
+      } else if (stage === 4) {
+        fill(80, 140, 80);
+        text("برای شروع دوباره کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
       }
-      
-      if (stage === 4) {
-        textSize(33);
-        fill(100);
-        text("\n\n\n\nبرای اندازه‌گیری جدید، دوباره کلیک کنید", width/2, 0.5);
-      }
-      
-      // اگر حداقل دو نقطه واقعی داشته باشیم (X و Y)
+
+      // خط و فاصله اصلی X → Y
       if (points.length >= 2) {
         let pX = points[0];
         let pY = points[1];
-
-        // خط ویژه X → Y (برجسته)
         stroke(0, 80, 200);
         strokeWeight(6);
         line(pX.x, pX.y, pY.x, pY.y);
 
-        let distXY = dist(pX.x, pX.y, pY.x, pY.y);
-        let metersXY = distXY / PIXELS_PER_METER;
-
+        let distXY = dist(pX.x, pX.y, pY.x, pY.y) / PIXELS_PER_METER;
         let midX = (pX.x + pY.x) / 2;
         let midY = (pX.y + pY.y) / 2;
 
         noStroke();
         fill(0, 80, 200, 230);
-        rect(midX - 90, midY - 30, 180, 60, 15);
+        rect(midX - 90, midY - 25, 180, 50, 15);
         fill(255);
-        textSize(33);
+        textSize(constrain(width / 40, 18, 30));
         textStyle(BOLD);
-        text(`${metersXY.toFixed(2)} متر`, midX, midY);
+        text(`${distXY.toFixed(2)} متر`, midX, midY);
       }
 
-      // خط و فاصله Y → Z
+      // خطوط و فاصله‌های Y→Z و X→Z وقتی سه نقطه داریم
       if (points.length === 3) {
         let pY = points[1];
         let pZ = points[2];
-
         stroke(100, 150, 255);
         strokeWeight(3);
         line(pY.x, pY.y, pZ.x, pZ.y);
 
-        let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y);
-        let metersYZ = distYZ / PIXELS_PER_METER;
-
-        let midX = (pY.x + pZ.x) / 2;
-        let midY = (pY.y + pZ.y) / 2;
-
-        noStroke();
+        let distYZ = dist(pY.x, pY.y, pZ.x, pZ.y) / PIXELS_PER_METER;
+        let midYZX = (pY.x + pZ.x) / 2;
+        let midYZY = (pY.y + pZ.y) / 2;
         fill(100, 150, 255, 220);
-        rect(midX - 60, midY - 20, 120, 40, 10);
+        noStroke();
+        rect(midYZX - 60, midYZY - 20, 120, 40, 10);
         fill(255);
-        textSize(33);
-        text(`${metersYZ.toFixed(2)} متر`, midX, midY);
-      }
+        textSize(24);
+        text(`${distYZ.toFixed(2)} متر`, midYZX, midYZY);
 
-      // خط و فاصله X → Z (معمولی)
-      if (points.length === 3) {
         let pX = points[0];
-        let pZ = points[2];
-
         stroke(150, 150, 150);
         strokeWeight(3);
         line(pX.x, pX.y, pZ.x, pZ.y);
 
-        let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y);
-        let metersXZ = distXZ / PIXELS_PER_METER;
-
-        let midX = (pX.x + pZ.x) / 2;
-        let midY = (pX.y + pZ.y) / 2;
-
-        noStroke();
+        let distXZ = dist(pX.x, pX.y, pZ.x, pZ.y) / PIXELS_PER_METER;
+        let midXZX = (pX.x + pZ.x) / 2;
+        let midXZY = (pX.y + pZ.y) / 2;
         fill(150, 150, 150, 220);
-        rect(midX - 60, midY - 20, 120, 40, 10);
+        noStroke();
+        rect(midXZX - 60, midXZY - 20, 120, 40, 10);
         fill(255);
-        textSize(33);
-        text(`${metersXZ.toFixed(2)} متر`, midX, midY);
+        textSize(24);
+        text(`${distXZ.toFixed(2)} متر`, midXZX, midXZY);
       }
-      // نمایش بزرگ فاصله X به Y در پایین صفحه
-      if (points.length == 2) {
-        let distXY = dist(points[0].x, points[0].y, points[1].x, points[1].y);
-        let metersXY = distXY / PIXELS_PER_METER;
 
+      // توضیحات پایین — فونت کوچکتر و مرتب
+      if (points.length >= 2) {
+        let baseY = height - BOTTOM_UI_HEIGHT + 40;
+        textSize(constrain(width / 45, 14, 24));
         fill(0);
-        textSize(40);
-        textStyle(BOLD);
-        text("فاصله                      ",width/2, height - 240);
-        text("(x تا y): ", width/2, height - 240);
-        text(`                          ${metersXY.toFixed(2)} متر`, width/2, height - 240);
-        fill(0,0,200);
-        
-        text("\n\n\n    تقارن: d(x,y) = d(y,x)\n", width/2, height - 220);
-        text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, height - 100);
+        textAlign(CENTER, TOP);
 
-        fill(100);
-        textSize(40);
-      } else if(points.length == 3){
-        let distXY = dist(points[0].x, points[0].y, points[1].x, points[1].y);
-        let metersXY = distXY / PIXELS_PER_METER;
-
-        fill(0);
-        textSize(40);
-        textStyle(BOLD);
-        text("فاصله                     ", width/2, height - 240);
-        text("(x تا y):", width/2, height - 240);
-        text(`                          ${metersXY.toFixed(2)}متر`, width/2, height - 240);
-        fill(0,0,200);
-        text(" نامساوی مثلث : d(x,y) ≤ d(x,z) + d(z,y)  ", width/2, height - 160);
+        if (points.length === 2) {
+          let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
+          text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width/2, baseY);
+          fill(0, 0, 200);
+          text("تقارن: d(x,y) = d(y,x)", width/2, baseY + 35);
+          text("یعنی فاصله بدون توجه به جهت یکسان است", width/2, baseY + 65);
+        } else if (points.length === 3) {
+          let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
+          text(`d(x,y) = ${dxy.toFixed(2)} متر`, width/2, baseY);
+          fill(120, 0, 160);
+          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width/2, baseY + 35);
+        }
       }
     }
 
     function mousePressed() {
-  // جلوگیری از کلیک روی نوشته‌های بالا
-  if (mouseY < 120) return;
+      // کلیک فقط در ناحیه سفید مجاز است (ناحیه بزرگ)
+      if (mouseY < TOP_UI_HEIGHT || mouseY > height - BOTTOM_UI_HEIGHT) {
+        return;
+      }
 
-  // جلوگیری از کلیک روی نوشته‌های پایین
-  if (mouseY > height - 150) return;
-
-  // --- کد اصلی تو ---
-  if (stage === 0) {
-    points[0] = {x: mouseX, y: mouseY};
-    stage = 1;
-
-  } else if (stage === 1) {
-    let d = dist(mouseX, mouseY, points[0].x, points[0].y);
-    if (d <= CALIBRATION_THRESHOLD) {
-      stage = 2;
+      if (stage === 0) {
+        points[0] = {x: mouseX, y: mouseY};
+        stage = 1;
+      } else if (stage === 1) {
+        let d = dist(mouseX, mouseY, points[0].x, points[0].y);
+        if (d <= CALIBRATION_THRESHOLD) {
+          stage = 2;
+        }
+      } else if (stage === 2) {
+        points[1] = {x: mouseX, y: mouseY};
+        stage = 3;
+      } else if (stage === 3) {
+        points[2] = {x: mouseX, y: mouseY};
+        stage = 4;
+      } else if (stage === 4) {
+        points = [];
+        stage = 0;
+      }
     }
-
-  } else if (stage === 2) {
-    points[1] = {x: mouseX, y: mouseY};
-    stage = 3;
-
-  } else if (stage === 3) {
-    points[2] = {x: mouseX, y: mouseY};
-    stage = 4;
-
-  } else if (stage === 4) {
-    points = [];
-    stage = 0;
-  }
-}
-
 
     function windowResized() {
       resizeCanvas(windowWidth, windowHeight);
-      background(240);
     }
   </script>
 </body>

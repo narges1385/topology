@@ -187,3 +187,51 @@ h3{
         overflow-x: hidden;
     }
 }
+.iframe-container {
+  position: relative;
+  width: 100%;        /* آیفریم همیشه عرض 100% والد را می‌گیرد */
+  max-width: 800px;   /* حداکثر عرض (می‌توانید تنظیم کنید) */
+  aspect-ratio: 16 / 9; /* نسبت تصویر (می‌توانید تغییر دهید) */
+  margin: 0 auto;     /* وسط‌چین کردن در لپ‌تاپ */
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* ================= iframe کاملاً Responsive ================= */
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;     /* حداکثر عرض در دسکتاپ */
+  margin: 40px auto;     /* فاصله عمودی و وسط‌چین */
+  padding-bottom: 56.25%; /* نسبت 16:9 (برای اکثر شبیه‌سازها عالیه) */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: #fff;      /* پس‌زمینه سفید تا بارگذاری */
+}
+
+.iframe-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* برای شبیه‌سازهایی که مربعی یا عمودی‌تر هستن (مثل norm.html یا metric_checker.html) */
+.iframe-wrapper.square {
+  padding-bottom: 80%;   /* تقریباً مربعی */
+}
+
+.iframe-wrapper.tall {
+  padding-bottom: 100%;  /* عمودی‌تر، مثلاً برای کوییز */
+}
+
+.iframe-wrapper.short {
+  padding-bottom: 45%;   /* کوتاه‌تر، اگر لازم شد */
+}
