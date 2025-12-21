@@ -2,10 +2,26 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>distance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ابزار تعاملی فاصله در صفحه</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
-    body { margin: 0; direction: rtl; font-family: Tahoma, sans-serif; background: #f0f0f0; }
+    body { 
+      margin: 0; 
+      direction: rtl; 
+      font-family: Tahoma, sans-serif; 
+      background: #f0f0f0; 
+      overflow: hidden;
+    }
+    
+    /* فقط در گوشی: فونت‌های بزرگ‌تر */
+    @media (max-width: 767px) {
+      /* همه متن‌های p5.js رو بزرگ‌تر می‌کنیم */
+      /* این کار رو داخل اسکریپت انجام می‌دیم، اما می‌تونیم پایه رو هم بزرگ کنیم */
+      body {
+        font-size: 18px; /* پایه فونت بزرگ‌تر برای موبایل */
+      }
+    }
   </style>
 </head>
 <body>
@@ -16,13 +32,15 @@
     const labels = ['x', 'y', 'z'];
     const CALIBRATION_THRESHOLD = 40;
 
-    // ارتفاع نوارها رو کمتر کردیم تا ناحیه سفید بزرگتر بشه
     const TOP_UI_HEIGHT = 80;
     const BOTTOM_UI_HEIGHT = 180;
     const UI_RADIUS = 20;
     const UI_MARGIN = 10;
 
     let stage = 0;
+
+    // تشخیص موبایل برای تنظیم اندازه فونت
+    const isMobile = () => window.innerWidth <= 767;
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
@@ -32,7 +50,7 @@
     function draw() {
       background(240);
 
-      // ناحیه بالا (آبی با حاشیه سفید)
+      // ناحیه بالا
       noStroke();
       fill(240);
       rect(0, 0, width, TOP_UI_HEIGHT);
@@ -40,12 +58,11 @@
       fill(123, 165, 207);
       rect(UI_MARGIN, UI_MARGIN, width - 2 * UI_MARGIN, TOP_UI_HEIGHT - UI_MARGIN, UI_RADIUS);
 
-      // ناحیه وسط سفید — حالا خیلی بزرگه
-      
+      // ناحیه وسط سفید
       fill(255);
       rect(0, TOP_UI_HEIGHT, width, height - TOP_UI_HEIGHT - BOTTOM_UI_HEIGHT);
 
-      // ناحیه پایین (آبی با حاشیه سفید)
+      // ناحیه پایین
       fill(240);
       rect(0, height - BOTTOM_UI_HEIGHT, width, BOTTOM_UI_HEIGHT);
 
@@ -62,21 +79,23 @@
         strokeWeight(4);
         ellipse(p.x, p.y, CIRCLE_RADIUS * 2);
         fill(255); noStroke(); ellipse(p.x, p.y, 8, 8);
+        
+        // لیبل نقاط — بزرگ‌تر در موبایل
         fill(0);
-        textSize(18);
         textStyle(BOLD);
+        textSize(isMobile() ? 28 : 18);
         text(labels[i], p.x, p.y);
       }
 
-      // راهنمایی بالا — فونت کوچکتر و responsive
+      // راهنمایی بالا — بزرگ‌تر در موبایل
       fill(50);
-      textSize(constrain(width / 35, 16, 28));
+      textSize(isMobile() ? 32 : constrain(width / 35, 16, 28));
 
       if (stage === 0) {
         text("نقطه x را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 1) {
         fill(200, 0, 0);
-        text("دوباره نزدیک به نقطه x کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
+        text("دوباره نزدیک به نقطه x کلیک کنید ", width/2, TOP_UI_HEIGHT / 2);
       } else if (stage === 2) {
         fill(50);
         text("نقطه y را انتخاب کنید", width/2, TOP_UI_HEIGHT / 2);
@@ -87,7 +106,7 @@
         text("برای شروع دوباره کلیک کنید", width/2, TOP_UI_HEIGHT / 2);
       }
 
-      // خط و فاصله اصلی X → Y
+      // فاصله اصلی X → Y
       if (points.length >= 2) {
         let pX = points[0];
         let pY = points[1];
@@ -103,12 +122,12 @@
         fill(0, 80, 200, 230);
         rect(midX - 90, midY - 25, 180, 50, 15);
         fill(255);
-        textSize(constrain(width / 40, 18, 30));
         textStyle(BOLD);
+        textSize(isMobile() ? 36 : constrain(width / 40, 18, 30));
         text(`${distXY.toFixed(2)} متر`, midX, midY);
       }
 
-      // خطوط و فاصله‌های Y→Z و X→Z وقتی سه نقطه داریم
+      // فاصله‌های Y→Z و X→Z
       if (points.length === 3) {
         let pY = points[1];
         let pZ = points[2];
@@ -123,7 +142,7 @@
         noStroke();
         rect(midYZX - 60, midYZY - 20, 120, 40, 10);
         fill(255);
-        textSize(24);
+        textSize(isMobile() ? 30 : 24);
         text(`${distYZ.toFixed(2)} متر`, midYZX, midYZY);
 
         let pX = points[0];
@@ -138,14 +157,14 @@
         noStroke();
         rect(midXZX - 60, midXZY - 20, 120, 40, 10);
         fill(255);
-        textSize(24);
+        textSize(isMobile() ? 30 : 24);
         text(`${distXZ.toFixed(2)} متر`, midXZX, midXZY);
       }
 
-      // توضیحات پایین — فونت کوچکتر و مرتب
+      // توضیحات پایین — بزرگ‌تر در موبایل
       if (points.length >= 2) {
         let baseY = height - BOTTOM_UI_HEIGHT + 40;
-        textSize(constrain(width / 45, 14, 24));
+        textSize(isMobile() ? 28 : constrain(width / 45, 14, 24));
         fill(0);
         textAlign(CENTER, TOP);
 
@@ -153,19 +172,19 @@
           let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
           text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width/2, baseY);
           fill(0, 0, 200);
-          text("تقارن: d(x,y) = d(y,x)", width/2, baseY + 35);
-          text("یعنی فاصله بدون توجه به جهت یکسان است", width/2, baseY + 65);
+          text("تقارن: d(x,y) = d(y,x)", width/2, baseY + 40);
+          text("یعنی فاصله‌ی x تا y برابر است با فاصله‌ی y تا x", width/2, baseY + 80);
         } else if (points.length === 3) {
           let dxy = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
           text(`d(x,y) = ${dxy.toFixed(2)} متر`, width/2, baseY);
           fill(120, 0, 160);
-          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width/2, baseY + 35);
+          text("نامساوی مثلث: d(x,y) ≤ d(x,z) + d(z,y)", width/2, baseY + 40);
+          text("کوتاه‌ترین مسیر همیشه خط مستقیم است", width/2, baseY + 80);
         }
       }
     }
 
     function mousePressed() {
-      // کلیک فقط در ناحیه سفید مجاز است (ناحیه بزرگ)
       if (mouseY < TOP_UI_HEIGHT || mouseY > height - BOTTOM_UI_HEIGHT) {
         return;
       }
