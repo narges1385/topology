@@ -3,19 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>چک کردن متریک - نسخه نهایی و آسان</title>
+  <title>چک کردن متریک - نسخه اصلاح‌شده</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.2/math.js"></script>
   <style>
-    *{
-    box-sizing: border-box;
-    }
-    html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden;
-    }
+    *{ box-sizing: border-box; }
+    html, body { margin:0; padding:0; width:100%; overflow-x:hidden; }
     body { font-family: Tahoma, sans-serif; direction: rtl; background-color: #f0f0f0; margin: 0; padding: 2vw;}
     h1 { color: #343a40; text-align: center; }
     .container { max-width: 920px; margin: 0 auto; background: #abccdf; border-radius: 18px; padding: 30px; }
@@ -50,14 +43,14 @@
       <!-- متغیرها -->
       <button class="btn btn-var" onclick="insert('x')">x</button>
       <button class="btn btn-var" onclick="insert('y')">y</button>
-      <button class="btn btn-var" onclick="insert('x − y')">(x − y)</button>
+      <button class="btn btn-var" onclick="insert('(x − y)')">(x − y)</button>
       <button class="btn btn-var" onclick="insert('|x − y|')">|x − y|</button>
 
       <!-- توابع اصلی -->
-      <button class="btn btn-func" onclick="insertWithCursor('√( )', 2)">√( )</button>
-      <button class="btn btn-func" onclick="insert('(x − y)^2')">(x − y)²</button>
-      <button class="btn btn-func" onclick="insertWithCursor('min( , )', 5)">min( , )</button>
-      <button class="btn btn-func" onclick="insertWithCursor('max( , )', 5)">max( , )</button>
+      <button class="btn btn-func" onclick="insert('sqrt()')">√( )</button>
+      <button class="btn btn-func" onclick="insert('^')">^</button>
+      <button class="btn btn-func" onclick="insert('min(,)')">min( , )</button>
+      <button class="btn btn-func" onclick="insert('max(,)')">max( , )</button>
 
       <!-- عملگرها -->
       <button class="btn btn-op" onclick="insert(' + ')">+</button>
@@ -69,7 +62,7 @@
       <button class="btn btn-extra" onclick="insert(' ( ')">(</button>
       <button class="btn btn-extra" onclick="insert(' ) ')">)</button>
       <button class="btn btn-extra" onclick="insert(' , ')">, </button>
-      <button class="btn btn-extra Daisy" onclick="insert('1/(1 + |x − y|) ')">1/(1 + |x−y|)</button>
+      <button class="btn btn-extra" onclick="insert('x + y')">x + y</button>
 
       <!-- اقدامات -->
       <button class="btn btn-action" onclick="backspace()">← پاک کن</button>
@@ -138,7 +131,9 @@
     // افزودن متن
     function insert(text) {
       const sel = window.getSelection();
+      if (!sel.rangeCount) return;
       const range = sel.getRangeAt(0);
+      range.deleteContents();
       const textNode = document.createTextNode(text);
       range.insertNode(textNode);
       range.setStartAfter(textNode);
@@ -146,16 +141,6 @@
       sel.removeAllRanges();
       sel.addRange(range);
       display.focus();
-    }
-
-    // افزودن با مکان‌نما داخل (مثل √( ) → مکان‌نما داخل پرانتز)
-    function insertWithCursor(text, cursorPosFromEnd) {
-      insert(text);
-      for (let i = 0; i < cursorPosFromEnd; i++) {
-        document.execCommand('selectAll', false, null);
-        document.execCommand('undo', false, null); // ترفند برای حرکت مکان‌نما
-      }
-      // ساده‌تر: فقط اضافه کن و کاربر خودش تنظیم کنه (در اکثر مرورگرها کار می‌کنه)
     }
 
     function backspace() {
@@ -182,14 +167,14 @@
       resultDiv.innerHTML = '';
 
       try {
+        // جایگزینی‌های لازم برای math.js
         let code = formula
-          .replace(/−/g, '-')
+          .replace(/\u2212/g, '-')     // منفی واقعی
+          .replace(/\s+/g, '')         // حذف فاصله‌ها
           .replace(/×/g, '*')
           .replace(/÷/g, '/')
-          .replace(/\|x − y\|/g, 'abs(x - y)')
-          .replace(/\|x - y\|/g, 'abs(x - y)')
-          .replace(/√/g, 'sqrt')
-          .replace(/\^/g, '**');
+          .replace(/\|x-y\|/g, 'abs(x-y)')
+          .replace(/√/g, 'sqrt');     // توجه: ^ را تغییر نمی‌دهیم
 
         const expr = math.compile(code);
         const d = (a, b) => expr.evaluate({x: a, y: b});
