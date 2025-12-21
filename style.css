@@ -11,6 +11,12 @@ html{
     scroll-behavior: smooth;
 }
 body {
+  margin: 0;
+  background: #f4f4f4; /* پس‌زمینه اطراف */
+}
+
+
+body {
     margin: 0;
     background: #abccdf;
     color: white; 
@@ -29,7 +35,7 @@ body {
     pointer-events: none;
 }
 h1 { 
-    font-size: 10vw; 
+    font-size: 80px; 
     text-shadow: 0.5vw 0.5vw #061a38, -0.5vw -0.5vw #061a38; 
     font-family: "Marhey", sans-serif;
 }
@@ -90,8 +96,8 @@ h1 {
   direction: rtl;
   font-family: Vazirmatn, Tahoma, sans-serif;
   line-height: 2.1;
-  font-size: 4vw;
-  margin: 4vw;
+  font-size: 40px;
+  margin: 40px;
   border-radius: 10vw;
   padding: 5vw;
   box-shadow: 0 0 10px #232a50;
@@ -101,7 +107,7 @@ h1 {
   margin: 12px 0;
 }
 
- .definition-title {
+.definition-title {
   font-family: Vazirmatn, Tahoma, sans-serif;
   text-align: center;
   font-weight: bold;
@@ -122,4 +128,62 @@ h3{
 }
 .name{
     font-size: 2.8vw;
+}
+/* ================= DESKTOP FIX ================= */
+@media (min-width: 1024px) {
+
+    /* فونت‌ها */
+    h1 {
+        font-size: 48px;
+        text-shadow: 6px 6px #061a38, -6px -6px #061a38;
+    }
+
+    .navbar li a {
+        font-size: 18px;
+        padding: 14px 0;
+    }
+
+    .definition {
+        font-size: 18px;
+        padding: 12px 24px;
+    }
+
+    .definition-title {
+        font-size: 28px;
+        padding-top: 32px;
+    }
+
+    .math-content {
+        font-size: 18px;
+        padding: 32px;
+        border-radius: 32px;
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+
+    .reference {
+        font-size: 16px;
+        padding-right: 32px;
+    }
+
+    .name {
+        font-size: 16px;
+    }
+
+    /* navbar فاصله‌ها */
+    .navbar li {
+        margin: 8px 6px;
+        border-radius: 14px;
+    }
+
+    /* iframe */
+    iframe {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* جلوگیری از کش آمدن */
+    body {
+        overflow-x: hidden;
+    }
 }
