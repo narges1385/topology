@@ -18,7 +18,7 @@
     const CALIBRATION_THRESHOLD = 40;
 
     const TOP_UI_HEIGHT = 80;
-    const BOTTOM_UI_HEIGHT = 220;  // کمی بیشتر کردیم تا متن‌های بزرگ جا بشن
+    const BOTTOM_UI_HEIGHT = 220; 
     const UI_RADIUS = 20;
     const UI_MARGIN = 10;
 
@@ -143,12 +143,9 @@
         text(`${distXZ.toFixed(2)} متر`, midXZX, midXZY);
       }
 
-      // توضیحات پایین — این بخش حالا در گوشی خیلی بزرگ و خوانا است
-            // توضیحات پایین — بهبود یافته برای خوانایی بهتر داخل iframe
       if (points.length >= 2) {
-        let baseY = height - BOTTOM_UI_HEIGHT + 50;  // کمی بالاتر بردیم
-        let lineHeight = constrain(height / 12, 40, 70);  // فاصله خطوط پویا و بزرگ‌تر
-
+        let baseY = height - BOTTOM_UI_HEIGHT + 50;  
+        let lineHeight = constrain(height / 12, 40, 70);  
         fill(0);
         textAlign(CENTER, TOP);
         textStyle(NORMAL);
@@ -156,7 +153,6 @@
         if (points.length === 2) {
           let d = dist(points[0].x, points[0].y, points[1].x, points[1].y) / PIXELS_PER_METER;
           
-          // اندازه فونت اصلی پویا و بزرگ‌تر
           textSize(constrain(height / 18, 32, 52));
           textStyle(BOLD);
           text(`فاصله (x تا y): ${d.toFixed(2)} متر`, width/2, baseY);

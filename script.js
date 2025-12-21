@@ -4,7 +4,7 @@ let shapes = [];
 
     function setup() {
       let canvas = createCanvas(windowWidth, 600, WEBGL);
-      canvas.parent('header-canvas'); // خیلی مهم: canvas رو به div وصل کن
+      canvas.parent('header-canvas'); 
 
       // مکعب - منهتن
       shapes.push({ type: 'box', pos: createVector(200, 0, 0), size: 180, color: [255, 80, 180] });
@@ -30,7 +30,6 @@ let shapes = [];
       rotateY(frameCount * 0.004);
       rotateX(frameCount * 0.002);
 
-      // رسم اشکال wireframe نئونی
       for (let s of shapes) {
         push();
         let offset = createVector(sin(frameCount * 0.012) * 60, cos(frameCount * 0.012) * 60, sin(frameCount * 0.012) * 40);

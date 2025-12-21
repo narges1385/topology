@@ -38,7 +38,6 @@
 <body>
 <div class="container">
 
-  <!-- کنترل‌ها -->
   
     <p style="display: inline;"> با دکمه روبه‌رو بین حالت دوبعدی و سه‌بعدی جابه‌جا شوید.</p>
     <button id="modeButton">حالت دوبعدی</button>
@@ -63,18 +62,14 @@
 </div>
 
 <script>
-/* =====================
-   متغیرها
-===================== */
+
 let pNorm = 2;
 let is3D = true;
 let showWire = false;
 let p5Instance = null;
 const R = 160;
 
-/* =====================
-   تشخیص فضا
-===================== */
+
 function detectSpace(p) {
   if (Math.abs(p - 1) < 0.05) return 'منهتن (L1)';
   if (Math.abs(p - 2) < 0.05) return 'اقلیدسی (L2)';
@@ -82,17 +77,13 @@ function detectSpace(p) {
   return 'فضای Lp عمومی';
 }
 
-/* =====================
-   ساخت اسکچ
-===================== */
+
 function createSketch() {
   if (p5Instance) p5Instance.remove();
   p5Instance = is3D ? new p5(sketch3D) : new p5(sketch2D);
 }
 
-/* =====================
-   اسکچ سه‌بعدی
-===================== */
+
 const sketch3D = (p) => {
   p.setup = () => {
     let canvas = p.createCanvas(900, 600, p.WEBGL);
@@ -102,7 +93,6 @@ const sketch3D = (p) => {
   p.draw = () => {
     p.background(240);
 
-    // چرخش بدون زوم
     p.orbitControl(1, 1, 0);
 
     p.rotateX(-p.PI / 6);
@@ -112,7 +102,6 @@ const sketch3D = (p) => {
     p.ambientLight(120);
     p.directionalLight(255, 255, 255, 0, 0, -1);
 
-    // محورها
     p.strokeWeight(3);
     p.stroke(255,0,0); p.line(-300,0,0,300,0,0);
     p.stroke(0,255,0); p.line(0,-300,0,0,300,0);
@@ -122,15 +111,14 @@ const sketch3D = (p) => {
     p.scale(R);
 
     if (showWire) {
-          p.noFill();          // بدون پر کردن داخل شکل
-          p.stroke(196, 152, 88);         // لبه‌ها مشکی
-          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
+          p.noFill();         
+          p.stroke(196, 152, 88);         
+          p.strokeWeight(3);   
         } else {
-          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
-          p.noStroke();             // بدون لبه داخلی
+          p.fill(196, 152, 88, 200);  
+          p.noStroke();           
         }
 
-    // تقریب توپ Lp
     let res = 28;
     p.beginShape(p.TRIANGLES);
     for (let i = 0; i < res; i++) {
@@ -159,9 +147,7 @@ const sketch3D = (p) => {
   };
 };
 
-/* =====================
-   اسکچ دوبعدی
-===================== */
+
 const sketch2D = (p) => {
   p.setup = () => {
     let canvas = p.createCanvas(900, 600);
@@ -172,18 +158,17 @@ const sketch2D = (p) => {
     p.background(240);
     p.translate(p.width/2, p.height/2);
 
-    // محورها
     p.strokeWeight(3);
     p.stroke(255,0,0); p.line(-400,0,400,0);
     p.stroke(0,255,0); p.line(0,-300,0,300);
 
     if (showWire) {
-          p.noFill();          // بدون پر کردن داخل شکل
-          p.stroke(196, 152, 88);         // لبه‌ها مشکی
-          p.strokeWeight(3);   // ضخامت زیاد برای وضوح
+          p.noFill();         
+          p.stroke(196, 152, 88);         
+          p.strokeWeight(3);   
         } else {
-          p.fill(196, 152, 88, 200);  // رنگ نارنجی شفاف
-          p.noStroke();             // بدون لبه داخلی
+          p.fill(196, 152, 88, 200);  
+          p.noStroke();            
         }
 
     p.beginShape();
@@ -196,9 +181,7 @@ const sketch2D = (p) => {
   };
 };
 
-/* =====================
-   رویدادها
-===================== */
+
 createSketch();
 
 document.getElementById('modeButton').onclick = () => {

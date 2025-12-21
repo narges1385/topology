@@ -128,7 +128,6 @@
       points.forEach(p => p.problem = false);
     }
 
-    // افزودن متن
     function insert(text) {
       const sel = window.getSelection();
       if (!sel.rangeCount) return;
@@ -167,14 +166,13 @@
       resultDiv.innerHTML = '';
 
       try {
-        // جایگزینی‌های لازم برای math.js
         let code = formula
-          .replace(/\u2212/g, '-')     // منفی واقعی
+          .replace(/\u2212/g, '-')    
           .replace(/\s+/g, '')         // حذف فاصله‌ها
           .replace(/×/g, '*')
           .replace(/÷/g, '/')
           .replace(/\|x-y\|/g, 'abs(x-y)')
-          .replace(/√/g, 'sqrt');     // توجه: ^ را تغییر نمی‌دهیم
+          .replace(/√/g, 'sqrt');     
 
         const expr = math.compile(code);
         const d = (a, b) => expr.evaluate({x: a, y: b});

@@ -135,7 +135,6 @@ h3 {
     font-size: 2.8vw;
 }
 
-/* ================= iframe - نسخه نهایی بدون scale ================= */
 iframe {
     width: 100%;
     max-width: 100%;
@@ -149,12 +148,10 @@ iframe {
     height: auto;
 }
 
-/* کلاس‌های اضافی برای نسبت‌های مختلف */
 iframe.square { aspect-ratio: 1 / 1; }
 iframe.tall   { aspect-ratio: 3 / 4; }
 iframe.short  { aspect-ratio: 16 / 10; }
 
-/* fallback برای مرورگرهای قدیمی */
 @supports not (aspect-ratio: 1) {
     iframe { height: 56.25vw; }
     iframe.square { height: 100vw; }
@@ -162,7 +159,6 @@ iframe.short  { aspect-ratio: 16 / 10; }
     iframe.short  { height: 62.5vw; }
 }
 
-/* ================= MOBILE FIX ================= */
 @media (max-width: 767px) {
     .math-content {
         font-size: 52px;
@@ -188,16 +184,15 @@ iframe.short  { aspect-ratio: 16 / 10; }
         font-size: 4.5vw;
     }
 
-    /* iframe در موبایل: بلندتر و بزرگ‌تر بدون scale */
     iframe {
-        aspect-ratio: 10 / 12;   /* خیلی بلندتر → فضای عمودی بیشتر برای ابزار */
+        aspect-ratio: 10 / 12;  
         max-width: 100%;
         margin: 50px auto;
     }
 
     iframe.square,
     iframe.tall {
-        aspect-ratio: 4 / 6;     /* بلندتر برای مربعی و عمودی */
+        aspect-ratio: 4 / 6;   
     }
 
     @supports not (aspect-ratio: 1) {
@@ -207,7 +202,6 @@ iframe.short  { aspect-ratio: 16 / 10; }
     }
 }
 
-/* ================= DESKTOP FIX ================= */
 @media (min-width: 1024px) {
     h1 {
         font-size: 70px;
@@ -265,10 +259,10 @@ iframe.short  { aspect-ratio: 16 / 10; }
     }
 
     @supports not (aspect-ratio: 1) {
-        iframe { height: 562.5px; } /* 1000px × 9/16 */
+        iframe { height: 562.5px; } 
     }
 }
-/* استایل مشترک همه iframeهای تعاملی */
+
 .iframe-container {
     width: 100%;
     max-width: 1000px;
@@ -288,16 +282,13 @@ iframe.interactive {
     height: auto;
 }
 
-/* کنترل دقیق ارتفاع هر iframe - این‌ها اولویت بالاتری دارند */
-/* دسکتاپ */
 iframe.iframe-distance       { height: 600px; }
 iframe.iframe-metric-point   { height: 800px; }
-iframe.iframe-metric-distance{ height: 1200px; }   /* این یکی معمولاً بزرگ‌تره */
+iframe.iframe-metric-distance{ height: 1200px; }   
 iframe.iframe-norm           { height: 1100px; }
-iframe.iframe-metric-checker { height: 950px; aspect-ratio: 4 / 3; }  /* کمی عمودی‌تر */
+iframe.iframe-metric-checker { height: 950px; aspect-ratio: 4 / 3; }
 iframe.iframe-quiz           { height: 850px; }
 
-/* موبایل - ارتفاع کمتر برای جلوگیری از اسکرول زیاد */
 @media (max-width: 767px) {
     .iframe-container {
         padding: 0 10px;
@@ -305,7 +296,7 @@ iframe.iframe-quiz           { height: 850px; }
     }
 
     iframe.interactive {
-        aspect-ratio: 10 / 11;   /* کمی بلندتر در موبایل */
+        aspect-ratio: 10 / 11;   
         border-radius: 12px;
     }
 
@@ -317,32 +308,27 @@ iframe.iframe-quiz           { height: 850px; }
     iframe.iframe-quiz           { height: 750px; }
 }
 
-/* برای مرورگرهای خیلی قدیمی که aspect-ratio رو پشتیبانی نمی‌کنن */
 @supports not (aspect-ratio: 1/1) {
-    iframe.interactive { height: 56.25vw; } /* 16:9 fallback */
+    iframe.interactive { height: 56.25vw; } 
 }
-/* کوچکتر کردن محتوای iframe فقط در لپ‌تاپ و دسکتاپ */
 @media (min-width: 768px) {
     .iframe-container {
-        overflow: hidden; /* برای جلوگیری از بریدگی احتمالی */
+        overflow: hidden; 
         border-radius: 16px;
     }
 
     iframe.interactive {
-        transform: scale(0.85);        /* ۸۵٪ اندازه اصلی — فونت کوچکتر و زیباتر */
+        transform: scale(0.85);      
         transform-origin: top center;
         width: 100%;
         height: auto;
         aspect-ratio: 16 / 9;
     }
 
-    /* تنظیم ارتفاع جدید بر اساس scale */
-    iframe.iframe-distance       { height: 600px; }   /* کمی بیشتر بده تا بعد از scale جا بشه */
+    iframe.iframe-distance       { height: 600px; } 
     iframe.iframe-metric-point   { height: 940px; }
     iframe.iframe-metric-distance{ height: 1170px; }
     iframe.iframe-norm           { height: 1050px; }
     iframe.iframe-metric-checker { height: 1110px; }
     iframe.iframe-quiz           { height: 1000px; }
 }
-
-/* اگر می‌خوای کوچکتر بشه (مثلاً ۸۰٪ یا ۷۵٪)، عدد رو تغییر بده */

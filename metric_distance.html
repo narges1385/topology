@@ -65,7 +65,7 @@ let metric = 'euclidean';
 let is3D = true;
 const RANGE = 350;
 let p5Instance;
-let initial3DView = true; // برای نشان دادن محور قبل از چرخش
+let initial3DView = true; 
 
 function recreateCanvas(){
   if(p5Instance) p5Instance.remove();
@@ -82,12 +82,11 @@ const sketch = function(p){
   p.background(240,245,250);
   if(is3D){
     if(initial3DView){
-      // زاویه اولیه تا هر سه محور مثبت دیده شوند
-      p.rotateX(p.radians(-35)); // کمی بالا به پایین
-      p.rotateY(p.radians(45)); // کمی چرخش به راست
+      p.rotateX(p.radians(-35));
+      p.rotateY(p.radians(45)); 
       p.rotateZ(p.radians(180));
     } else {
-      // بعد از کلیک/حرکت کاربر فقط چرخش آزاد
+      // بعد از کلیک کاربر فقط چرخش آزاد
       p.orbitControl(1,1,0);
     }
     drawGrid3D();
