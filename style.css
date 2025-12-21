@@ -132,9 +132,10 @@ h3 {
     font-size: 2.8vw;
 }
 
-/* ================= iframe بدون container اضافی ================= */
+/* ================= iframe - نسخه نهایی بدون scale ================= */
 iframe {
     width: 100%;
+    max-width: 100%;
     border: none;
     border-radius: 16px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -142,6 +143,7 @@ iframe {
     display: block;
     margin: 40px auto;
     aspect-ratio: 16 / 9;
+    height: auto;
 }
 
 /* کلاس‌های اضافی برای نسبت‌های مختلف */
@@ -151,9 +153,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
 
 /* fallback برای مرورگرهای قدیمی */
 @supports not (aspect-ratio: 1) {
-    iframe {
-        height: 56.25vw;
-    }
+    iframe { height: 56.25vw; }
     iframe.square { height: 100vw; }
     iframe.tall   { height: 133.33vw; }
     iframe.short  { height: 62.5vw; }
@@ -162,49 +162,42 @@ iframe.short  { aspect-ratio: 16 / 10; }
 /* ================= MOBILE FIX ================= */
 @media (max-width: 767px) {
     .math-content {
-        font-size: 52px; /* كان 48px → أكبر قليلاً للقراءة */
+        font-size: 52px;
         padding: 8vw;
         margin: 30px 15px;
         border-radius: 12vw;
     }
     .definition {
-        font-size: 6vw; /* كان 5.5vw → أكبر */
+        font-size: 6vw;
     }
     .definition-title {
-        font-size: 8vw; /* كان 7vw → أكبر */
+        font-size: 8vw;
+        padding-top: 10vw;
     }
     .reference {
-        font-size: 5vw; /* كان 4.5vw → أكبر */
+        font-size: 5vw;
+        padding-right: 8vw;
     }
     .name {
-        font-size: 4.5vw; /* كان 4vw → أكبر */
+        font-size: 4.5vw;
     }
 
-    /* ==== تعديل الـ iframe ليكون أطول ومحتواه أكبر ==== */
+    /* iframe در موبایل: بلندتر و بزرگ‌تر بدون scale */
     iframe {
-        aspect-ratio: 10 / 11; /* أطول من 10/9 → ارتفاع أكبر (بلندتر) */
-        max-width: 95%;
+        aspect-ratio: 10 / 12;   /* خیلی بلندتر → فضای عمودی بیشتر برای ابزار */
+        max-width: 96%;
         margin: 50px auto;
-        transform: scale(1.15); /* تكبير المحتوى الداخلي (فونت، عناوين، ترجمة) بنسبة 15% */
-        transform-origin: center top; /* يبدأ التكبير من الأعلى لتجنب قطع الجزء السفلي */
     }
 
     iframe.square,
     iframe.tall {
-        aspect-ratio: 4 / 5.5; /* أطول أيضًا للنسب المربعة/الطويلة */
-        transform: scale(1.15);
-        transform-origin: center top;
+        aspect-ratio: 4 / 6;     /* بلندتر برای مربعی و عمودی */
     }
 
-    /* Fallback للمتصفحات القديمة */
     @supports not (aspect-ratio: 1) {
-        iframe {
-            height: 110vw; /* معادل تقريبي لـ 10/11 */
-        }
+        iframe { height: 120vw; }
         iframe.square,
-        iframe.tall {
-            height: 137.5vw; /* معادل تقريبي لـ 4/5.5 */
-        }
+        iframe.tall { height: 150vw; }
     }
 }
 
@@ -256,21 +249,13 @@ iframe.short  { aspect-ratio: 16 / 10; }
         overflow-x: hidden;
     }
 
-    /* نسبت عریض‌تر اما کمی بلندتر از قبل (طول بیشتر = ارتفاع بیشتر نسبت به عرض) */
     iframe {
-        aspect-ratio: 16 / 9;  /* از 21/9 به 18/9 تغییر کرد → iframe بلندتر (ارتفاع بیشتر) */
+        aspect-ratio: 16 / 9;
         max-width: 1000px;
-    }
-
-    /* کوچک کردن محتوا فقط در دسکتاپ */
-    iframe {
-        transform: scale(0.85);
-        transform-origin: center center;
+        margin: 40px auto;
     }
 
     @supports not (aspect-ratio: 1) {
-        iframe {
-            height: 50vw;  /* معادل تقریبی 18:9 */
-        }
+        iframe { height: 562.5px; } /* 1000px × 9/16 */
     }
 }
