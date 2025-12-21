@@ -162,49 +162,48 @@ iframe.short  { aspect-ratio: 16 / 10; }
 /* ================= MOBILE FIX ================= */
 @media (max-width: 767px) {
     .math-content {
-        font-size: 48px;
+        font-size: 52px; /* كان 48px → أكبر قليلاً للقراءة */
         padding: 8vw;
         margin: 30px 15px;
         border-radius: 12vw;
     }
-
     .definition {
-        font-size: 5.5vw;
+        font-size: 6vw; /* كان 5.5vw → أكبر */
     }
-
     .definition-title {
-        font-size: 7vw;
-        padding-top: 10vw;
+        font-size: 8vw; /* كان 7vw → أكبر */
     }
-
     .reference {
-        font-size: 4.5vw;
-        padding-right: 8vw;
+        font-size: 5vw; /* كان 4.5vw → أكبر */
     }
-
     .name {
-        font-size: 4vw;
+        font-size: 4.5vw; /* كان 4vw → أكبر */
     }
 
-    /* طول (ارتفاع) iframe در گوشی بیشتر شد */
+    /* ==== تعديل الـ iframe ليكون أطول ومحتواه أكبر ==== */
     iframe {
-        aspect-ratio: 9 / 10;   /* نسبت عمودی‌تر → ارتفاع بیشتر نسبت به عرض */
+        aspect-ratio: 10 / 11; /* أطول من 10/9 → ارتفاع أكبر (بلندتر) */
         max-width: 95%;
         margin: 50px auto;
+        transform: scale(1.15); /* تكبير المحتوى الداخلي (فونت، عناوين، ترجمة) بنسبة 15% */
+        transform-origin: center top; /* يبدأ التكبير من الأعلى لتجنب قطع الجزء السفلي */
     }
 
     iframe.square,
     iframe.tall {
-        aspect-ratio: 3 / 5;    /* حتی بلندتر برای این کلاس‌ها */
+        aspect-ratio: 4 / 5.5; /* أطول أيضًا للنسب المربعة/الطويلة */
+        transform: scale(1.15);
+        transform-origin: center top;
     }
 
+    /* Fallback للمتصفحات القديمة */
     @supports not (aspect-ratio: 1) {
         iframe {
-            height: 111.11vw;   /* معادل تقریبی 9:10 */
+            height: 110vw; /* معادل تقريبي لـ 10/11 */
         }
         iframe.square,
         iframe.tall {
-            height: 166.67vw;   /* معادل تقریبی 3:5 */
+            height: 137.5vw; /* معادل تقريبي لـ 4/5.5 */
         }
     }
 }
@@ -257,11 +256,13 @@ iframe.short  { aspect-ratio: 16 / 10; }
         overflow-x: hidden;
     }
 
+    /* نسبت عریض‌تر اما کمی بلندتر از قبل (طول بیشتر = ارتفاع بیشتر نسبت به عرض) */
     iframe {
-        aspect-ratio: 18 / 9;
+        aspect-ratio: 16 / 9;  /* از 21/9 به 18/9 تغییر کرد → iframe بلندتر (ارتفاع بیشتر) */
         max-width: 1000px;
     }
 
+    /* کوچک کردن محتوا فقط در دسکتاپ */
     iframe {
         transform: scale(0.85);
         transform-origin: center center;
@@ -269,7 +270,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
 
     @supports not (aspect-ratio: 1) {
         iframe {
-            height: 50vw;
+            height: 50vw;  /* معادل تقریبی 18:9 */
         }
     }
 }
