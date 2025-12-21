@@ -191,7 +191,7 @@ iframe.short  { aspect-ratio: 16 / 10; }
     /* iframe در موبایل: بلندتر و بزرگ‌تر بدون scale */
     iframe {
         aspect-ratio: 10 / 12;   /* خیلی بلندتر → فضای عمودی بیشتر برای ابزار */
-        max-width: 96%;
+        max-width: 100%;
         margin: 50px auto;
     }
 
