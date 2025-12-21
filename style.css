@@ -132,6 +132,82 @@ h3 {
     font-size: 2.8vw;
 }
 
+/* ================= iframe بدون container اضافی ================= */
+iframe {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+    display: block;
+    margin: 40px auto;
+    aspect-ratio: 16 / 9;
+}
+
+/* کلاس‌های اضافی برای نسبت‌های مختلف */
+iframe.square { aspect-ratio: 1 / 1; }
+iframe.tall   { aspect-ratio: 3 / 4; }
+iframe.short  { aspect-ratio: 16 / 10; }
+
+/* fallback برای مرورگرهای قدیمی */
+@supports not (aspect-ratio: 1) {
+    iframe {
+        height: 56.25vw;
+    }
+    iframe.square { height: 100vw; }
+    iframe.tall   { height: 133.33vw; }
+    iframe.short  { height: 62.5vw; }
+}
+
+/* ================= MOBILE FIX ================= */
+@media (max-width: 767px) {
+    .math-content {
+        font-size: 48px;
+        padding: 8vw;
+        margin: 30px 15px;
+        border-radius: 12vw;
+    }
+
+    .definition {
+        font-size: 5.5vw;
+    }
+
+    .definition-title {
+        font-size: 7vw;
+        padding-top: 10vw;
+    }
+
+    .reference {
+        font-size: 4.5vw;
+        padding-right: 8vw;
+    }
+
+    .name {
+        font-size: 4vw;
+    }
+
+    iframe {
+        aspect-ratio: 10 / 9;
+        max-width: 95%;
+        margin: 50px auto;
+    }
+
+    iframe.square,
+    iframe.tall {
+        aspect-ratio: 4 / 5;
+    }
+
+    @supports not (aspect-ratio: 1) {
+        iframe {
+            height: 90vw;
+        }
+        iframe.square,
+        iframe.tall {
+            height: 125vw;
+        }
+    }
+}
+
 /* ================= DESKTOP FIX ================= */
 @media (min-width: 1024px) {
     h1 {
@@ -179,53 +255,22 @@ h3 {
     body {
         overflow-x: hidden;
     }
-}
 
-/* ================= iframe کاملاً Responsive (روش مدرن با aspect-ratio) ================= */
-.iframe-container {
-    position: relative;
-    width: 100%;
-    max-width: 1100px;
-    margin: 40px auto;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    background: #f0f0f0;
-    aspect-ratio: 16 / 9; /* نسبت پیش‌فرض برای اکثر شبیه‌سازها */
-}
-
-.iframe-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* کلاس‌های اضافی برای نسبت‌های مختلف */
-.iframe-container.square {
-    aspect-ratio: 1 / 1;
-}
-
-.iframe-container.tall {
-    aspect-ratio: 3 / 4;
-}
-
-.iframe-container.short {
-    aspect-ratio: 16 / 10;
-}
-
-/* برای مرورگرهای قدیمی‌تر که aspect-ratio را پشتیبانی نمی‌کنند (اختیاری) */
-@supports not (aspect-ratio: 1) {
-    .iframe-container {
-        padding-bottom: 56.25%; /* 16:9 */
-        height: 0;
+    /* نسبت عریض‌تر اما کمی بلندتر از قبل (طول بیشتر = ارتفاع بیشتر نسبت به عرض) */
+    iframe {
+        aspect-ratio: 16 / 9;  /* از 21/9 به 18/9 تغییر کرد → iframe بلندتر (ارتفاع بیشتر) */
+        max-width: 1000px;
     }
-    .iframe-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
+
+    /* کوچک کردن محتوا فقط در دسکتاپ */
+    iframe {
+        transform: scale(0.85);
+        transform-origin: center center;
     }
-    .iframe-container.square { padding-bottom: 100%; }
-    .iframe-container.tall   { padding-bottom: 133.33%; } /* 3:4 */
-    .iframe-container.short  { padding-bottom: 62.5%; }   /* 16:10 */
+
+    @supports not (aspect-ratio: 1) {
+        iframe {
+            height: 50vw;  /* معادل تقریبی 18:9 */
+        }
+    }
 }
